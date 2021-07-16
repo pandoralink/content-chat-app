@@ -10,7 +10,7 @@
         android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/NavBar_border"
+        android:background="@drawable/navBar_border"
         android:padding="10dp"
         android:layout_alignParentTop="true">
 
@@ -30,7 +30,7 @@
                 android:id="@+id/recommend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@id/follow"
                 android:text="推荐"
                 android:textSize="20sp" />
