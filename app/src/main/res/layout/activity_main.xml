@@ -6,67 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/navBar"
-        android:layout_width="match_parent"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/nav_bar_border"
-        android:padding="10dp">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
-
-            <TextView
-                android:id="@+id/follow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="关注"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/recommend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@id/follow"
-                android:text="推荐"
-                android:textSize="20sp" />
-        </RelativeLayout>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/search" />
-    </RelativeLayout>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/tabbarBar"
-        android:layout_below="@id/navBar">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/lv_news_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        android:layout_above="@id/rg_tab_bar" />
 
     <RadioGroup
-        android:id="@+id/tabbarBar"
+        android:id="@+id/rg_tab_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/tabbar_border"
+        android:background="@drawable/tab_bar_border"
         android:orientation="horizontal"
         android:padding="10dp">
 
         <RadioButton
+            android:id="@+id/rb_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -75,7 +31,7 @@
             android:checked="true"
             android:gravity="center"
             android:text="首页"
-            android:textColor="@drawable/radio_button_textColor"
+            android:textColor="@drawable/radio_button_text_color"
             android:textSize="20sp" />
 
         <RadioButton
@@ -86,7 +42,7 @@
             android:button="@null"
             android:gravity="center"
             android:text="消息"
-            android:textColor="@drawable/radio_button_textColor"
+            android:textColor="@drawable/radio_button_text_color"
             android:textSize="20sp" />
 
         <RadioButton
@@ -97,7 +53,7 @@
             android:button="@null"
             android:gravity="center"
             android:text="创作"
-            android:textColor="@drawable/radio_button_textColor"
+            android:textColor="@drawable/radio_button_text_color"
             android:textSize="20sp" />
 
         <RadioButton
@@ -108,7 +64,7 @@
             android:button="@null"
             android:gravity="center"
             android:text="我"
-            android:textColor="@drawable/radio_button_textColor"
+            android:textColor="@drawable/radio_button_text_color"
             android:textSize="20sp" />
     </RadioGroup>
 

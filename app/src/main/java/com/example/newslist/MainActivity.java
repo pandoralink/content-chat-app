@@ -1,99 +1,85 @@
 package com.example.newslist;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
-import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.example.newslist.message.MsgFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
+/**
+ * @author 庞旺
+ */
 public class MainActivity extends AppCompatActivity {
-    //    titles、authors 是 2.4.3.4 模板
-    private String[] titles = null;
-    private String[] authors = null;
-    private static final String NEWS_TITLE = "news_title";
-    private static final String NEWS_AUTHOR = "news_author";
-    private List<Map<String, String>> dataList = new ArrayList<>();
-
-    // 最终版静态变量如下
-    public static final String NEWS_ID = "news_id";
-    private List<News> newsList = new ArrayList<>();
-
-    private NewsAdapter newsAdapter = null;
-    private RecyclerView recyclerView;
-
-    private SwipeRefreshLayout swipe;
+    private ViewPager mViewPager;
+    private RadioGroup rgTabBar;
+    List<Fragment> fragments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.lv_news_list);
-        initData();
+        initViews();
+    }
 
-        newsAdapter = new NewsAdapter(MainActivity.this, R.layout.list_item, newsList);
+    private void initViews() {
 
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-//        横向布局，如需铺满全屏需要在activity_main中设置
-//        LinearLayoutManager llmH = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-//      表格形式显⽰列表(2列)
-//        GridLayoutManager Glm = new GridLayoutManager(this,2);
-        recyclerView.setLayoutManager(llm);
-        recyclerView.setAdapter(newsAdapter);
+        mViewPager = (ViewPager) findViewById(R.id.vp_content);
+        rgTabBar = (RadioGroup) findViewById(R.id.rg_tab_bar);
 
-        swipe = findViewById(R.id.swipe);
-        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshData();
+        fragments.add(new NewsFragment());
+        fragments.add(new MsgFragment());
+        fragments.add(new NewsFragment());
+        fragments.add(new UserFragment());
+
+        mViewPager.setAdapter(new NewsFragmentPagerAdapter(getSupportFragmentManager(), fragments));
+        mViewPager.setOffscreenPageLimit(2);
+
+        mViewPager.addOnPageChangeListener(mPageChangeListener);
+        rgTabBar.setOnCheckedChangeListener(mOnCheckedChangeListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mViewPager.removeOnPageChangeListener(mPageChangeListener);
+    }
+
+    private ViewPager.OnPageChangeListener mPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            RadioButton radioButton = (RadioButton) rgTabBar.getChildAt(position);
+            radioButton.setChecked(true);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
+    private RadioGroup.OnCheckedChangeListener mOnCheckedChangeListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                if (group.getChildAt(i).getId() == checkedId) {
+                    mViewPager.setCurrentItem(i);
+                    return;
+                }
             }
-        });
-    }
-
-    private void initData() {
-        int length;
-        titles = getResources().getStringArray(R.array.titles);
-        authors = getResources().getStringArray(R.array.authors);
-
-        TypedArray images = getResources().obtainTypedArray(R.array.images);
-
-        if (titles.length > authors.length) {
-            length = authors.length;
-        } else {
-            length = titles.length;
         }
+    };
 
-        for (int i = 0; i < length; i++) {
-            News news = new News();
-            news.setTitle(titles[i]);
-            news.setAuthor(authors[i]);
-            news.setImageId(images.getResourceId(i, 0));
-
-            newsList.add(news);
-        }
-    }
-
-    private void refreshData() {
-        Random random = new Random();
-        int index = random.nextInt(19);
-
-        News news = new News();
-
-        TypedArray images = getResources().obtainTypedArray(R.array.images);
-        news.setTitle(titles[index]);
-        news.setAuthor(authors[index]);
-//        news.setContent(contents[index]);
-        news.setImageId(images.getResourceId(index,0));
-
-        newsAdapter.add(news);
-        newsAdapter.notifyDataSetChanged();
-        swipe.setRefreshing(false);
-    }
 }

@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <RelativeLayout
-        android:id="@+id/navBar"
+        android:id="@+id/rl_nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -35,8 +35,8 @@
         android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/tabbarBar"
-        android:layout_below="@id/navBar">
+        android:layout_above="@id/rg_tab_bar"
+        android:layout_below="@id/rl_nav_bar">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lv_news_list"
@@ -46,11 +46,11 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <RelativeLayout
-        android:id="@+id/tabbarBar"
+        android:id="@+id/rg_tab_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/tabbar_border"
+        android:background="@drawable/tab_bar_border"
         android:padding="10dp">
 
         <EditText

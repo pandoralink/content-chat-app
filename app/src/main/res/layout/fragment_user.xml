@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".User">
+    tools:context=".MainActivity">
 
     <RelativeLayout
         android:id="@+id/user_manager"
@@ -171,7 +171,7 @@
         </RelativeLayout>
         <com.google.android.material.button.MaterialButton
             android:layout_below="@id/follow_manager"
-            android:id="@+id/msg_send_btn"
+            android:id="@+id/btn_user_out"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
