@@ -10,9 +10,9 @@
         android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:background="@drawable/nav_bar_border"
-        android:padding="10dp"
-        android:layout_alignParentTop="true">
+        android:padding="10dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -47,8 +47,8 @@
         android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/navBar"
-        android:layout_above="@id/tabbarBar">
+        android:layout_above="@id/tabbarBar"
+        android:layout_below="@id/navBar">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lv_news_list"
@@ -57,42 +57,59 @@
             android:scrollbars="none" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <LinearLayout
+    <RadioGroup
         android:id="@+id/tabbarBar"
-        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/tabbar_border"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-        <TextView
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@null"
+            android:button="@null"
+            android:checked="true"
             android:gravity="center"
             android:text="首页"
-            android:textSize="20sp"/>
-        <TextView
+            android:textColor="@drawable/radio_button_textColor"
+            android:textSize="20sp" />
+
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@null"
+            android:button="@null"
             android:gravity="center"
             android:text="消息"
-            android:textSize="20sp"/>
-        <TextView
+            android:textColor="@drawable/radio_button_textColor"
+            android:textSize="20sp" />
+
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@null"
+            android:button="@null"
             android:gravity="center"
             android:text="创作"
-            android:textSize="20sp"/>
-        <TextView
+            android:textColor="@drawable/radio_button_textColor"
+            android:textSize="20sp" />
+
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@null"
+            android:button="@null"
             android:gravity="center"
             android:text="我"
-            android:textSize="20sp"/>
-    </LinearLayout>
+            android:textColor="@drawable/radio_button_textColor"
+            android:textSize="20sp" />
+    </RadioGroup>
 
 </RelativeLayout>
