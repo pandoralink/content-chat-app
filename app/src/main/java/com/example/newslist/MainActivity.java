@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -20,13 +21,22 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private RadioGroup rgTabBar;
     List<Fragment> fragments = new ArrayList<>();
+    private static final String TAG = "PW";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d(TAG, "onCreate: " + getIntent());
         initViews();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        String test = getIntent().getStringExtra("FragmentPosition");
+        Log.d("PW", "onRestart: " + test);
     }
 
     private void initViews() {

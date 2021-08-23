@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.newslist.News;
 import com.example.newslist.R;
 
 import java.util.List;
@@ -18,13 +17,28 @@ import java.util.List;
  * @author 庞旺
  */
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
-    private List<News> mNewsData;
+    private List<Messages> messagesData;
     private Context mContext;
     private int resourceId;
+    private OnItemClickListener mOnItemClickListener;
 
-    public MessagesAdapter(Context context, int resourceId, List<News> data) {
+    public interface OnItemClickListener {
+        /**
+         * RecyclerView Item 的点击事件
+         *
+         * @param view
+         * @param position
+         */
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
+
+    public MessagesAdapter(Context context, int resourceId, List<Messages> data) {
         this.mContext = context;
-        this.mNewsData = data;
+        this.messagesData = data;
         this.resourceId = resourceId;
     }
 
@@ -32,45 +46,53 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     public MessagesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(resourceId, parent, false);
         MessagesAdapter.ViewHolder holder = new MessagesAdapter.ViewHolder(view);
+
         return holder;
     }
 
     @Override
     public void onBindViewHolder(MessagesAdapter.ViewHolder holder, int position) {
-        News news = mNewsData.get(position);
-        holder.tvTitle.setText(news.getTitle());
-        holder.tvAuthor.setText(news.getAuthor());
+        Messages messages = messagesData.get(position);
+        holder.friendName.setText(messages.getFriendName());
+        holder.firstMsg.setText(messages.getFirstMsg());
 
-        if (news.getImageId() != -1) {
-            holder.ivImage.setImageResource(news.getImageId());
+        if (mOnItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(holder.itemView, position);
+                }
+            });
+        }
+
+        if (messages.getHead() != -1) {
+            holder.head.setImageResource(messages.getHead());
         }
     }
 
     @Override
     public int getItemCount() {
-        return mNewsData.size();
+        return messagesData.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle;
-        TextView tvAuthor;
-        ImageView ivImage;
+        TextView friendName;
+        TextView firstMsg;
+        ImageView head;
 
         public ViewHolder(View view) {
             super(view);
 
-            tvTitle = view.findViewById(R.id.tv_title);
-            tvAuthor = view.findViewById(R.id.tv_subtitle);
-            ivImage = view.findViewById(R.id.iv_image);
+            friendName = view.findViewById(R.id.msg_title);
+            firstMsg = view.findViewById(R.id.msg_content);
+            head = view.findViewById(R.id.iv_image);
         }
     }
 
-    public void add(News data) {
-        mNewsData.add(0, data);
+    public void add(Messages data) {
+        messagesData.add(0, data);
         notifyItemInserted(0);
-        //刷新下标，不然下标就不连续
-        notifyItemRangeChanged(0, mNewsData.size());
+        notifyItemRangeChanged(0, messagesData.size());
     }
-
 }
 
