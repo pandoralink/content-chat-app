@@ -22,12 +22,14 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup rgTabBar;
     List<Fragment> fragments = new ArrayList<>();
     private static final String TAG = "PW";
+    private static int defaultPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate: " + getIntent());
+        defaultPage = getIntent().getIntExtra("id",0);
+
         initViews();
     }
 
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(mPageChangeListener);
         rgTabBar.setOnCheckedChangeListener(mOnCheckedChangeListener);
+
+        mViewPager.setCurrentItem(defaultPage);
     }
 
     @Override

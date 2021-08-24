@@ -31,6 +31,7 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
+                intent.putExtra("id",3);
                 startActivity(intent);
             }
         });

@@ -27,7 +27,7 @@ public class MsgContentActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MsgContentActivity.this, MainActivity.class);
-                intent.putExtra("FragmentPosition",3);
+                intent.putExtra("id",1);
                 startActivity(intent);
             }
         });
