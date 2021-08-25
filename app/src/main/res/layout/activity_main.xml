@@ -10,10 +10,10 @@
         android:id="@+id/vp_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/rg_tab_bar" />
+        android:layout_above="@id/rl_tab_bar" />
 
     <RadioGroup
-        android:id="@+id/rg_tab_bar"
+        android:id="@+id/rl_tab_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -34,8 +34,8 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/rg_tab_bar"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rl_footer"
         android:layout_below="@id/rl_nav_bar">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -46,57 +46,79 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <RelativeLayout
-        android:id="@+id/rg_tab_bar"
+        android:id="@+id/rl_footer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/tab_bar_border"
-        android:padding="10dp">
+        android:layout_height="wrap_content">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@drawable/circle_msg_edit"
-            android:hint="发送消息..."
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@id/msg_voice"
-            android:paddingLeft="20dp"
-            android:paddingTop="5dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="5dp"
-            android:textSize="18sp" />
+        <RelativeLayout
+            android:id="@+id/rl_tab_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_bar_border"
+            android:padding="10dp">
 
-        <ImageView
-            android:id="@+id/msg_voice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/msg_photo"
-            android:src="@drawable/msg_voice"/>
-        <ImageView
-            android:id="@+id/msg_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/msg_send_btn"
-            android:src="@drawable/msg_photo"/>
+            <ImageView
+                android:id="@+id/msg_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/msg_voice" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/msg_send_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/selectState"
-            android:text="发送"
-            android:textSize="20sp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            app:cornerRadius="15dp"
-            />
+            <EditText
+                android:id="@+id/et_msg_content"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/iv_msg_option"
+                android:layout_toRightOf="@id/msg_voice"
+                android:background="@drawable/circle_msg_edit"
+                android:hint="发送消息..."
+                android:paddingLeft="20dp"
+                android:paddingTop="5dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="5dp"
+                android:textSize="18sp" />
+
+
+            <ImageView
+                android:id="@+id/iv_msg_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/msg_send_btn"
+                android:src="@drawable/ic_open" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/msg_send_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@color/selectState"
+                android:text="发送"
+                android:textSize="20sp"
+                app:cornerRadius="15dp" />
+        </RelativeLayout>
+        <GridLayout
+            android:id="@+id/gl_msg_option"
+            android:layout_width="match_parent"
+            android:layout_below="@id/rl_tab_bar"
+            android:rowCount="4"
+            android:columnCount="1"
+            android:padding="15dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_row="0"
+                android:layout_column="0"
+                android:src="@drawable/ic_photo_64"/>
+        </GridLayout>
     </RelativeLayout>
+
 
 </RelativeLayout>

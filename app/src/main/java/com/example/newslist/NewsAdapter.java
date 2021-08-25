@@ -12,10 +12,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * @author 庞旺
+ */
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private List<News> mNewsData;
     private Context mContext;
     private int resourceId;
+    private OnItemClickListener mOnItemClickListener;
+
+    public interface OnItemClickListener {
+        /**
+         * RecyclerView Item 的点击事件
+         *
+         * @param view
+         * @param position
+         */
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
 
     public NewsAdapter(Context context, int resourceId, List<News> data) {
 //        为什么要删除super()?
@@ -38,6 +56,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         News news = mNewsData.get(position);
         holder.tvTitle.setText(news.getTitle());
         holder.tvAuthor.setText(news.getAuthor());
+
+        if (mOnItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(holder.itemView, position);
+                }
+            });
+        }
 
         if(news.getImageId() != -1) {
             holder.ivImage.setImageResource(news.getImageId());

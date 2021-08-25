@@ -1,5 +1,6 @@
 package com.example.newslist;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.example.newslist.message.MsgContentActivity;
+import com.example.newslist.popup.OperationDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,12 @@ public class NewsFragment extends Fragment {
         initData();
 
         newsAdapter = new NewsAdapter(getContext(), R.layout.list_item, newsData);
+        newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                new OperationDialogFragment().show(getActivity().getSupportFragmentManager(),"OperationDialogFragment");
+            }
+        });
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rvNewsList.setLayoutManager(llm);
