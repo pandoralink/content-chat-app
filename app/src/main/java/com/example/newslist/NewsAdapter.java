@@ -58,10 +58,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.tvAuthor.setText(news.getAuthor());
 
         if (mOnItemClickListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View v) {
                     mOnItemClickListener.onItemClick(holder.itemView, position);
+                    return false;
                 }
             });
         }

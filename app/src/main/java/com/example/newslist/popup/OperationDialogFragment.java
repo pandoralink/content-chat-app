@@ -1,17 +1,15 @@
 package com.example.newslist.popup;
 
 import android.app.Dialog;
-import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.DialogFragment;
 
 import com.example.newslist.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -23,16 +21,11 @@ public class OperationDialogFragment extends BottomSheetDialogFragment {
     private Dialog dialog;
     View rootView;
 
-//    @Override
-//    public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        dialog = super.onCreateDialog(savedInstanceState);
-//        dialog.setCanceledOnTouchOutside(true);//设置点击外部可消失
-//        Window win = dialog.getWindow();
-//        WindowManager.LayoutParams params = win.getAttributes();
-//        win.setSoftInputMode(params.SOFT_INPUT_ADJUST_NOTHING);//设置使软键盘弹出的时候dialog不会被顶起
-//        win.setWindowAnimations(R.style.Anim_Dialog_Bottom);//这里设置dialog的进出动画
-//        return dialog;
-//    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NO_FRAME, R.style.operationDialogFragment);
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -49,19 +42,7 @@ public class OperationDialogFragment extends BottomSheetDialogFragment {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_operation_dialog, container, false);
         }
-        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                getScreenHeight(getActivity()) * 2 / 3));
+        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300));
         return rootView;
-    }
-
-
-    /**
-     * 得到屏幕的高
-     * @param context
-     */
-    public static int getScreenHeight(FragmentActivity context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        int height = wm.getDefaultDisplay().getHeight();
-        return height;
     }
 }

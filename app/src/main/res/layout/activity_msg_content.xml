@@ -48,8 +48,8 @@
     <RelativeLayout
         android:id="@+id/rl_footer"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
         <RelativeLayout
             android:id="@+id/rl_tab_bar"
@@ -104,19 +104,21 @@
                 android:textSize="20sp"
                 app:cornerRadius="15dp" />
         </RelativeLayout>
+
         <GridLayout
             android:id="@+id/gl_msg_option"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/rl_tab_bar"
-            android:rowCount="4"
             android:columnCount="1"
             android:padding="15dp"
-            android:visibility="gone"
-            android:layout_height="wrap_content">
+            android:rowCount="4"
+            android:visibility="gone">
+
             <ImageView
                 android:layout_row="0"
                 android:layout_column="0"
-                android:src="@drawable/ic_photo_64"/>
+                android:src="@drawable/ic_photo_64" />
         </GridLayout>
     </RelativeLayout>
 
