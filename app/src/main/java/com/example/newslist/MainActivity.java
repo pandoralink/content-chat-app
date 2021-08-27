@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.example.newslist.createNew.CreateNewFragment;
 import com.example.newslist.message.MsgFragment;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragments.add(new NewsFragment());
         fragments.add(new MsgFragment());
-        fragments.add(new NewsFragment());
+        fragments.add(new CreateNewFragment());
         fragments.add(new UserFragment());
 
         mViewPager.setAdapter(new NewsFragmentPagerAdapter(getSupportFragmentManager(), fragments));
