@@ -126,6 +126,7 @@ user_id user_new_url new_comment_id
 点赞功能先不做，有如下问题
 
 1. 如果加入 thumb（点赞数）字段，怎么防止重复点赞？如果记录每个点赞人的 id，作为另一个字段（假设为 thumber），那么在上千点赞数的情况就会非常冗余，而且更新评论点赞时还需要查询一下 thumber
+2. 打算加入一个 subId（子 id）的功能，每篇文章拥有一个评论区 id，而每个评论区又有自己的子 id
 
 ```SQL
 CREATE TABLE `comment` (
@@ -141,3 +142,8 @@ CREATE TABLE `comment` (
   CONSTRAINT `commentator_id` FOREIGN KEY (`commentator_id`) REFERENCES `user` (`user_id`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
+
+9/3 号需要完善的地方
+
+1. 新闻页面中的新闻 item 长按后出现的两个图标的 padding-top 需要增大，图标直接黏顶部了
+2. 新闻加载的有点卡，比如 vue 并没有及时的将图片渲染到位，一些数据也没能成功渲染（而是渲染了原始 HTML 元素，比如 `{{ followStatus ? "+ 关注" : "✔ 已关注" }}`）

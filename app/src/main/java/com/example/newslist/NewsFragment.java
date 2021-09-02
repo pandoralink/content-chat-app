@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.newslist.message.MsgContentActivity;
+import com.example.newslist.news.NewsContentActivity;
 import com.example.newslist.popup.OperationDialogFragment;
 
 import java.util.ArrayList;
@@ -48,8 +48,14 @@ public class NewsFragment extends Fragment {
         newsAdapter = new NewsAdapter(getContext(), R.layout.list_item, newsData);
         newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemLongClick(View view, int position) {
                 new OperationDialogFragment().show(getActivity().getSupportFragmentManager(),"OperationDialogFragment");
+            }
+
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+                startActivity(intent);
             }
         });
 

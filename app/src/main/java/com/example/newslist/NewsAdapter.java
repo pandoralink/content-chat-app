@@ -1,7 +1,6 @@
 package com.example.newslist;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
         /**
-         * RecyclerView Item 的点击事件
+         * RecyclerView Item 的长按点击事件
+         *
+         * @param view
+         * @param position
+         */
+        void onItemLongClick(View view, int position);
+
+        /**
+         * NewsFragment item 的点击事件
          *
          * @param view
          * @param position
@@ -43,7 +50,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         this.resourceId = resourceId;
     }
 
-//    高中生的做法 Cursor 绑定
+    //    高中生的做法 Cursor 绑定
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(resourceId, parent, false);
@@ -61,13 +68,19 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mOnItemClickListener.onItemClick(holder.itemView, position);
+                    mOnItemClickListener.onItemLongClick(holder.itemView, position);
                     return false;
+                }
+            });
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemClickListener.onItemClick(holder.itemView, position);
                 }
             });
         }
 
-        if(news.getImageId() != -1) {
+        if (news.getImageId() != -1) {
             holder.ivImage.setImageResource(news.getImageId());
         }
     }
