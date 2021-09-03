@@ -27,12 +27,12 @@ at com.example.newslist.message.MessagesAdapter$1.onClick(MessagesAdapter.java:6
         at android.view.View.performClickInternal(View.java:7425)
         at android.view.View.access$3600(View.java:810)
 at android.view.View$PerformClick.run(View.java:28305)
-        at android.os.Handler.handleCallback(Handler.java:938)
-        at android.os.Handler.dispatchMessage(Handler.java:99)
-        at android.os.Looper.loop(Looper.java:223)
-        at android.app.ActivityThread.main(ActivityThread.java:7656)
-        at java.lang.reflect.Method.invoke(Native Method)
-        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:592)
+at android.os.Handler.handleCallback(Handler.java:938)
+at android.os.Handler.dispatchMessage(Handler.java:99)
+at android.os.Looper.loop(Looper.java:223)
+at android.app.ActivityThread.main(ActivityThread.java:7656)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:592)
 at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:947)
 原因：没有在 AndroidMainfest 中声明 Activity
 
@@ -104,7 +104,31 @@ CREATE TABLE `new` (
   CONSTRAINT `new_owner_id` FOREIGN KEY (`new_owner_id`) REFERENCES `user` (`user_id`),
   PRIMARY KEY (`new_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+# 新增外键约束
+ALTER TABLE new ADD CONSTRAINT new_comment_area_id FOREIGN KEY(new_comment_area_id) REFERENCES comment(comment_id)
+# 删除外键约束
+# 先查看约束名称
+SHOW CREATE TABLE new;
+alter table new drop foreign key new_comment_area_id;
+alter table new drop column new_comment_area_id;
 ```
+
+### 存储过程 proc_newByInsert
+```sql
+CREATE PROCEDURE proc_newByInsert (
+  in new_owner_id int,
+  in new_owner_head_url varchar(100),
+  in new_name varchar(100)
+)
+BEGIN
+  declare newUrl varchar(100);
+  select concat("http://116.63.152.202:5002/News/",max(new_id),".html") into newUrl from new;
+  INSERT INTO new(new_url,new_owner_id,new_owner_head_url,new_name) VALUES (newUrl,new_owner_id,new_owner_head_url,new_name);
+END;
+```
+1. 会直接拿 new 表中的最大值作为 new_url 的值，因为该值最后会返回给后端进行一个 HTML 文件命名
+2. 如果有多个请求同时拿到最大值也只会有一个能够插入成功，因为 new_url 将会是唯一的
 
 ## 关注系统数据库设计
 
@@ -126,24 +150,59 @@ user_id user_new_url new_comment_id
 点赞功能先不做，有如下问题
 
 1. 如果加入 thumb（点赞数）字段，怎么防止重复点赞？如果记录每个点赞人的 id，作为另一个字段（假设为 thumber），那么在上千点赞数的情况就会非常冗余，而且更新评论点赞时还需要查询一下 thumber
-2. 打算加入一个 subId（子 id）的功能，每篇文章拥有一个评论区 id，而每个评论区又有自己的子 id
+2. 文章 id 即是评论区 id，唯一
+3. 评论中新增 new_id 字段，代表为某篇文章的评论区，就算评论数量只需找到相应的文章 id 然后计算条数即可
+4. 先删去自增属性，改为，在固定文章 id 的情况下，以 1 为起始点，加一一条评论
 
 ```SQL
 CREATE TABLE `comment` (
-  `comment_id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `comment_id` int NOT NULL COMMENT '评论id',
+  `new_id` int COMMENT '文章id',
   `content` text COMMENT '评论内容',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `commentator_id` int COMMENT '评论者id',
-  `commentator_name` varchar(100) COMMENT '评论者id',
+  `commentator_name` varchar(100) COMMENT '评论者名称',
   `commentator_head_url` varchar(100) COMMENT '头像URL',
   `parent_id` int COMMENT '回复人id',
   PRIMARY KEY (`id`),
   KEY `commentator_id` (`commentator_id`),
-  CONSTRAINT `commentator_id` FOREIGN KEY (`commentator_id`) REFERENCES `user` (`user_id`),
+  CONSTRAINT `commentator_id` FOREIGN KEY (`commentator_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
 
+### proc_commentByInsert
+```SQL
+CREATE PROCEDURE proc_commentByInsert(
+  in newId int,
+  in content text,
+  in create_time datetime,
+  in commentator_id int,
+  in commentator_name varchar(100),
+  in commentator_head_url varchar(100),
+  in parent_id int
+)
+BEGIN
+  declare commentId int;
+  select max(comment_id) into commentId from comment where new_id = newId;
+  if commentId is NULL then
+    set commentId = 1;
+  end if;
+  INSERT INTO comment(comment_id,new_id,content,create_time,commentator_id,commentator_name,commentator_head_url,parent_id)
+  VALUES (commentId,newId,content,create_time,commentator_id,commentator_name,commentator_head_url,parent_id);
+END;
+
+call proc_commentByInsert(2,"test","",1005,"庞老闆","http://116.63.152.202:5002/userHead/default_head.png",0);
+
+```
+
+新增 proc_newByInsert（文章插入的存储过程）
+
 9/3 号需要完善的地方
 
-1. 新闻页面中的新闻 item 长按后出现的两个图标的 padding-top 需要增大，图标直接黏顶部了
+1. 新闻页面中的新闻 item 长按后出现的两个图标的 padding-top 需要增大，图标直接黏顶部了 9 月 3 号 16 点 15 分 解决
 2. 新闻加载的有点卡，比如 vue 并没有及时的将图片渲染到位，一些数据也没能成功渲染（而是渲染了原始 HTML 元素，比如 `{{ followStatus ? "+ 关注" : "✔ 已关注" }}`）
+
+9/3 号错误
+1. 文件路径出错，./html/xx.html 写成 ./htmlxx.html
+2. 异步嵌套循环导致每次循环开始都是同一个值，因为最后一异步没有完成，没有插入数据，就已经循环完毕了，所以每次循环都是拿到没插入任何一条数据时的 max(new_id)

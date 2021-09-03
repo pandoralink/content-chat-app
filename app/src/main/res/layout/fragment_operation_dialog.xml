@@ -24,6 +24,7 @@
             android:button="@null"
             android:drawableTop="@drawable/ic_copy_link_64"
             android:gravity="center"
+            android:paddingTop="4dp"
             android:text="复制链接"
             android:textColor="@drawable/radio_button_text_color"
             android:textSize="20sp" />
@@ -36,6 +37,7 @@
             android:button="@null"
             android:drawableTop="@drawable/ic_not_like_64"
             android:gravity="center"
+            android:paddingTop="4dp"
             android:text="不感兴趣"
             android:textColor="@drawable/radio_button_text_color"
             android:textSize="20sp" />
