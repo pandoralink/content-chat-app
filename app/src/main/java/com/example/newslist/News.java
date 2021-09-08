@@ -1,40 +1,57 @@
 package com.example.newslist;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class News {
-    private String mTitle;
-    private String mAuthor;
-    private String mContent;
-    private int mImageId;
+    @SerializedName("new_id")
+    private Integer aId;
+    @SerializedName("new_name")
+    private String title;
+    @SerializedName("new_url")
+    private String article;
+    @SerializedName("new_owner_id")
+    private Integer authorId;
+    @SerializedName("new_owner_head_url")
+    private String authorHeadUrl;
+
+    public Integer getaId() {
+        return aId;
+    }
+
+    public void setaId(Integer aId) {
+        this.aId = aId;
+    }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public void setTitle(String title) {
-        this.mTitle = title;
+        this.title = title;
     }
 
-    public String getAuthor() {
-        return mAuthor;
+    public String getArticle() {
+        return article;
     }
 
-    public void setAuthor(String mAuthor) {
-        this.mAuthor = mAuthor;
+    public void setArticle(String article) {
+        this.article = article;
     }
 
-    public String getContent() {
-        return mContent;
+    public Integer getAuthorId() {
+        return authorId;
     }
 
-    public void setContent(String mContent) {
-        this.mContent = mContent;
+    public void setAuthorId(Integer authorId) {
+        this.authorId = authorId;
     }
 
-    public int getImageId() {
-        return mImageId;
+    public String getAuthorHeadUrl() {
+        return authorHeadUrl;
     }
 
-    public void setImageId(int mImageId) {
-        this.mImageId = mImageId;
+    public void setAuthorHeadUrl(String authorHeadUrl) {
+        this.authorHeadUrl = authorHeadUrl;
     }
 }

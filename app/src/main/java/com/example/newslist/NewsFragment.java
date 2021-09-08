@@ -3,6 +3,8 @@ package com.example.newslist;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +14,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.newslist.data.BaseResponse;
+import com.example.newslist.data.Constants;
 import com.example.newslist.news.NewsContentActivity;
 import com.example.newslist.popup.OperationDialogFragment;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 /**
@@ -25,6 +38,7 @@ import java.util.Random;
  */
 public class NewsFragment extends Fragment {
 
+    private static final String TAG = "PW";
     View rootView;
     private RecyclerView rvNewsList;
     private NewsAdapter newsAdapter;
@@ -44,30 +58,11 @@ public class NewsFragment extends Fragment {
         rvNewsList = rootView.findViewById(R.id.lv_news_list);
 
         initData();
-
-        newsAdapter = new NewsAdapter(getContext(), R.layout.list_item, newsData);
-        newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
-            @Override
-            public void onItemLongClick(View view, int position) {
-                new OperationDialogFragment().show(getActivity().getSupportFragmentManager(),"OperationDialogFragment");
-            }
-
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        rvNewsList.setLayoutManager(llm);
-        rvNewsList.setAdapter(newsAdapter);
-
         swipe = rootView.findViewById(R.id.swipe);
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshData();
+//                refreshData();
             }
         });
         return rootView;
@@ -84,41 +79,72 @@ public class NewsFragment extends Fragment {
 
     private void initData() {
         newsData = new ArrayList<>();
-        int length;
-        titles = getResources().getStringArray(R.array.titles);
-        authors = getResources().getStringArray(R.array.authors);
+        newsAdapter = new NewsAdapter(getContext(), R.layout.list_item, newsData);
+        newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                new OperationDialogFragment().show(getActivity().getSupportFragmentManager(), "OperationDialogFragment");
+            }
 
-        TypedArray images = getResources().obtainTypedArray(R.array.images);
-
-        if (titles.length > authors.length) {
-            length = authors.length;
-        } else {
-            length = titles.length;
-        }
-
-        for (int i = 0; i < length; i++) {
-            News news = new News();
-            news.setTitle(titles[i]);
-            news.setAuthor(authors[i]);
-            news.setImageId(images.getResourceId(i, 0));
-
-            newsData.add(news);
-        }
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+                intent.putExtra(Constants.ARTICLE_URL_KEY,newsData.get(position).getArticle());
+                startActivity(intent);
+            }
+        });
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        rvNewsList.setLayoutManager(llm);
+        rvNewsList.setAdapter(newsAdapter);
+        refreshData();
     }
+
+    private okhttp3.Callback callback = new okhttp3.Callback() {
+        @Override
+        public void onResponse(Call call, Response response)
+                throws IOException {
+            if (response.isSuccessful()) {
+                final String body = response.body().string();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gson gson = new Gson();
+                        Type jsonType = new TypeToken<BaseResponse<List<News>>>() {
+                        }.getType();
+                        BaseResponse<List<News>> newsListResponse = gson.fromJson(body, jsonType);
+                        for (News news : newsListResponse.getData()) {
+                            newsAdapter.add(news);
+                        }
+                        newsAdapter.notifyDataSetChanged();
+                        swipe.setRefreshing(false);
+                    }
+                });
+            } else {
+            }
+        }
+
+        @Override
+        public void onFailure(Call call, IOException e) {
+            Log.e(TAG, "Failed to connect server!");
+            e.printStackTrace();
+        }
+    };
 
     private void refreshData() {
-        Random random = new Random();
-        int index = random.nextInt(19);
-
-        News news = new News();
-
-        TypedArray images = getResources().obtainTypedArray(R.array.images);
-        news.setTitle(titles[index]);
-        news.setAuthor(authors[index]);
-        news.setImageId(images.getResourceId(index,0));
-
-        newsAdapter.add(news);
-        newsAdapter.notifyDataSetChanged();
-        swipe.setRefreshing(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Request request = new Request.Builder()
+                        .url(Constants.ARTICLE_URL)
+                        .get().build();
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    client.newCall(request).enqueue(callback);
+                } catch (NetworkOnMainThreadException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
+

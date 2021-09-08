@@ -1,6 +1,7 @@
 package com.example.newslist;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private Context mContext;
     private int resourceId;
     private OnItemClickListener mOnItemClickListener;
+    private String TAG = "PW";
 
     public interface OnItemClickListener {
         /**
@@ -62,7 +64,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         News news = mNewsData.get(position);
         holder.tvTitle.setText(news.getTitle());
-        holder.tvAuthor.setText(news.getAuthor());
+        // 后端那边还没有设置作者名称，先用 id 来代替
+        holder.tvAuthor.setText(Integer.toString(news.getaId()));
 
         if (mOnItemClickListener != null) {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -80,9 +83,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             });
         }
 
-        if (news.getImageId() != -1) {
-            holder.ivImage.setImageResource(news.getImageId());
-        }
+        // 封面图片还没有先不设置
+//        if (news.getImageId() != -1) {
+//            holder.ivImage.setImageResource(news.getImageId());
+//        }
     }
 
     @Override

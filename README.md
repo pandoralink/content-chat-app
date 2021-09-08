@@ -93,6 +93,15 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
 
+new new_owner_head_id 文章创作头像链接 字段修改为 article_cover_url 文章封面链接
+
+新增字段 article_owner_name
+1. 优点，向前端传递数据时，只需查询一次 new table，就可以拿到页面初始化所需要的所有数据
+2. 缺点，每次用户更新名称的时候需要更新它的在 new 表中所有相关文章（考虑到用户小概率会修改名称，所以方案具有一定可行性），点击文章查看时也需要发出一次请求（获取头像以及其他相关可视信息）
+3. 替代方案，不新增此字段，则需在后端中对 new_owner_id 和 user 表进行连接查询（这样能够拿到一次刷新所有文章作者的可见信息，点击文章查看时文章作者信息栏（获取头像和名称）也无需再次发出请求），而且用户以后更新信息时也不需要对 new 表更新
+4. 总结，如果需要做到一次返回数据，那么 new 表可能需要频繁加入多个新字段，同时虽然用户更新自身信息的可能性小，但还是有可能的，我个人认为，数据量很大的情况下，原始方案好，存放大量可视信息，但小数据的情况下，new 表字段小一点方便观察
+5. 结果，选择替代方案
+
 ```SQL
 CREATE TABLE `new` (
   `new_id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -213,10 +222,36 @@ call proc_commentByInsert(2,"test","",1005,"庞老闆","http://116.63.152.202:50
 
 9/7 号需要完善的地方
 
-图片加载的时侯，vue.js 的导入未生效，此时 vue.js 和其他模块组已经导入完成但未生效
+图片加载的时侯，vue.js 的导入未生效，此时 vue.js 和其他模块组已经导入完成但未生效 9/7 已解决
 
 9/3 号错误
 1. 文件路径出错，./html/xx.html 写成 ./htmlxx.html
 2. 异步嵌套循环导致每次循环开始都是同一个值，因为最后一异步没有完成，没有插入数据，就已经循环完毕了，所以每次循环都是拿到没插入任何一条数据时的 max(new_id)
 
 实现 HTML 更新脚本（updateHtml.js）
+
+注意 url（后端 API）拼接的规则，不要出现 `hostname//api` 的情况，hostname 后面应该跟单个 `/`
+
+java.lang.IllegalArgumentException: class com.example.newslist.News declares multiple JSON fields named new_owner_id
+
+com.google.gson.JsonSyntaxException: java.lang.NumberFormatException: empty String
+
+基类和后端数据不匹配
+
+ android.content.res.Resources$NotFoundException: String resource ID #0x2b
+
+9/9 号
+
+1. 首要任务，关注以后能否查看关注作者的文章（可以先搁置关注后端的实现）
+2. 作者信息栏 android 和 vue 两个方案中选择一个
+3. 次要任务 
+   1. 点击作者信息跳转到作者信息详情页（私信功能需要罗淳日去完善）
+   2. 点击关注后关注表新增数据的一系列后端实现
+   3. 跳转文章内容并获取到作者信息后需要更新页面相关信息
+
+其他需要完善的，
+1. 回复框的解耦，不需要每个评论配置一个回复框
+2. 评论区样式修改
+3. 评论区点赞功能的实现
+4. 评论后需要后台提醒
+5. 评论区 android 和 vue 两个方案中选择一个

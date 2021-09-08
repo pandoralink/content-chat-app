@@ -2,6 +2,7 @@ package com.example.newslist.news;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -27,7 +28,8 @@ public class NewsContentActivity extends AppCompatActivity {
                 finish();
             }
         });
-        String url = Constants.TEST_NEW_URL;
+        Intent intent = getIntent();
+        String url =intent.getStringExtra(Constants.ARTICLE_URL_KEY);
         WebView webView = findViewById(R.id.wv_new);
         webView.setWebViewClient(new WebViewClient() {
             //设置在webView点击打开的新网页在当前界面显示,而不跳转到新的浏览器中
