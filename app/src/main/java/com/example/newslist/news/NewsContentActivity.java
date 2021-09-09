@@ -5,16 +5,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.newslist.News;
 import com.example.newslist.R;
+import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class NewsContentActivity extends AppCompatActivity {
+
+    private String TAG = "PW";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +43,7 @@ public class NewsContentActivity extends AppCompatActivity {
             }
         });
         Intent intent = getIntent();
-        String url =intent.getStringExtra(Constants.ARTICLE_URL_KEY);
+        String url = intent.getStringExtra(Constants.ARTICLE_URL_KEY);
         WebView webView = findViewById(R.id.wv_new);
         webView.setWebViewClient(new WebViewClient() {
             //设置在webView点击打开的新网页在当前界面显示,而不跳转到新的浏览器中
@@ -86,4 +100,32 @@ public class NewsContentActivity extends AppCompatActivity {
         /* //调用loadUrl方法为WebView加入链接 */
         webView.loadUrl(url);
     }
+
+    private okhttp3.Callback callback = new okhttp3.Callback() {
+        @Override
+        public void onResponse(Call call, Response response)
+                throws IOException {
+            if (response.isSuccessful()) {
+                final String body = response.body().string();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gson gson = new Gson();
+                        Type jsonType = new TypeToken<BaseResponse<List<News>>>() {
+                        }.getType();
+                        BaseResponse<List<News>> newsListResponse = gson.fromJson(body, jsonType);
+                        newsAdapter.notifyDataSetChanged();
+                        swipe.setRefreshing(false);
+                    }
+                });
+            } else {
+            }
+        }
+
+        @Override
+        public void onFailure(Call call, IOException e) {
+            Log.e(TAG, "Failed to connect server!");
+            e.printStackTrace();
+        }
+    };
 }

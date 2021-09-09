@@ -145,8 +145,8 @@ END;
 
 ```SQL
 CREATE TABLE fans (
-  blogger_id int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  fan_id int UNIQUE COMMENT '用户账号',
+  blogger_id int NOT NULL COMMENT '被关注账号id',
+  fan_id int NOT NULL COMMENT '粉丝账号id',
   FOREIGN KEY(blogger_id) REFERENCES user(user_id),
   FOREIGN KEY(fan_id) REFERENCES user(user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
@@ -207,6 +207,8 @@ call proc_commentByInsert(2,"test","",1005,"庞老闆","http://116.63.152.202:50
 
 新增 proc_newByInsert（文章插入的存储过程）
 
+基于 Vue 本身渲染 Dom 和加载数据以及 Android webkit 绘图引擎和 PC 端的有所差别，选择使用 Android 展示作者信息栏
+
 9/3 号需要完善的地方
 
 1. 新闻页面中的新闻 item 长按后出现的两个图标的 padding-top 需要增大，图标直接黏顶部了 9 月 3 号 16 点 15 分 解决
@@ -242,8 +244,9 @@ com.google.gson.JsonSyntaxException: java.lang.NumberFormatException: empty Stri
 
 9/9 号
 
-1. 首要任务，关注以后能否查看关注作者的文章（可以先搁置关注后端的实现）
+1. 首要任务，关注以后能否查看关注作者的文章（可以先搁置关注后端的实现） 9/10 00点33分
 2. 作者信息栏 android 和 vue 两个方案中选择一个
+   1. 9/10 01点19分 选择 android 方案，后端获取信息已经实现，但是没有渲染到 android 页面上
 3. 次要任务 
    1. 点击作者信息跳转到作者信息详情页（私信功能需要罗淳日去完善）
    2. 点击关注后关注表新增数据的一系列后端实现
@@ -255,3 +258,6 @@ com.google.gson.JsonSyntaxException: java.lang.NumberFormatException: empty Stri
 3. 评论区点赞功能的实现
 4. 评论后需要后台提醒
 5. 评论区 android 和 vue 两个方案中选择一个
+6. BaseResponse 基类以及 News（后期可能会修改名称为 Article）中对应云端默认值为空的处理
+
+9/10 由于 9/9 号还有大量的任务没有完成，所以 9/10 号不设置任务

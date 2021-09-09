@@ -10,6 +10,9 @@ import android.widget.RadioGroup;
 
 import com.example.newslist.createNew.CreateNewFragment;
 import com.example.newslist.message.MsgFragment;
+import com.example.newslist.news.ArticleFragment;
+import com.example.newslist.news.ArticleFragmentPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +39,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-
         mViewPager = findViewById(R.id.vp_content);
         rgTabBar = findViewById(R.id.rl_tab_bar);
 
-        fragments.add(new NewsFragment());
+        fragments.add(new ArticleFragment());
         fragments.add(new MsgFragment());
         fragments.add(new CreateNewFragment());
         fragments.add(new UserFragment());

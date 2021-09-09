@@ -85,7 +85,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
             friendName = view.findViewById(R.id.msg_title);
             firstMsg = view.findViewById(R.id.msg_content);
-            head = view.findViewById(R.id.iv_image);
+            head = view.findViewById(R.id.iv_author_head);
         }
     }
 

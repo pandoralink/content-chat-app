@@ -24,4 +24,7 @@
         <item name="android:windowFullscreen">true</item>
         <!-- 全屏 -->
     </style>
+    <style name="TabLayoutTextStyle">
+        <item name="android:textSize">@dimen/tl_textSize</item>
+    </style>
 </resources>

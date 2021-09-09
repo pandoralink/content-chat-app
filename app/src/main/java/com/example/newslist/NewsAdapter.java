@@ -1,7 +1,6 @@
 package com.example.newslist;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         News news = mNewsData.get(position);
         holder.tvTitle.setText(news.getTitle());
         // 后端那边还没有设置作者名称，先用 id 来代替
-        holder.tvAuthor.setText(Integer.toString(news.getaId()));
+        if (news.getaId() != null) {
+            holder.tvAuthor.setText(Integer.toString(news.getaId()));
+        }
 
         if (mOnItemClickListener != null) {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -104,7 +105,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
             tvTitle = view.findViewById(R.id.tv_title);
             tvAuthor = view.findViewById(R.id.tv_subtitle);
-            ivImage = view.findViewById(R.id.iv_image);
+            ivImage = view.findViewById(R.id.iv_author_head);
         }
     }
 

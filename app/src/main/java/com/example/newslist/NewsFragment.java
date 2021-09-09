@@ -46,7 +46,15 @@ public class NewsFragment extends Fragment {
     private SwipeRefreshLayout swipe;
     private String[] titles = null;
     private String[] authors = null;
+    private String CURRENT_URL;
 
+    public NewsFragment() {
+        CURRENT_URL = Constants.ARTICLE_URL;
+    }
+
+    public NewsFragment(String currentUrl) {
+        CURRENT_URL = currentUrl;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,7 +97,8 @@ public class NewsFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-                intent.putExtra(Constants.ARTICLE_URL_KEY,newsData.get(position).getArticle());
+                intent.putExtra(Constants.ARTICLE_URL_KEY, newsData.get(position).getArticle());
+                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY,newsData.get(position).getaId());
                 startActivity(intent);
             }
         });
@@ -135,7 +144,7 @@ public class NewsFragment extends Fragment {
             @Override
             public void run() {
                 Request request = new Request.Builder()
-                        .url(Constants.ARTICLE_URL)
+                        .url(CURRENT_URL)
                         .get().build();
                 try {
                     OkHttpClient client = new OkHttpClient();
