@@ -249,8 +249,9 @@ com.google.gson.JsonSyntaxException: java.lang.NumberFormatException: empty Stri
    1. 9/10 01点19分 选择 android 方案，后端获取信息已经实现，但是没有渲染到 android 页面上
 3. 次要任务 
    1. 点击作者信息跳转到作者信息详情页（私信功能需要罗淳日去完善）
+      1. 2021年9月11日00点51分 完成 由于私信逻辑功能未完善，所以只有 UI 跳转，具体 Intent 传递数据未定
    2. 点击关注后关注表新增数据的一系列后端实现
-   3. 跳转文章内容并获取到作者信息后需要更新页面相关信息
+   3. 跳转文章内容并获取到作者信息后需要更新页面相关信息 2021年9月11日00点51分 完成
 
 其他需要完善的，
 1. 回复框的解耦，不需要每个评论配置一个回复框
@@ -259,5 +260,32 @@ com.google.gson.JsonSyntaxException: java.lang.NumberFormatException: empty Stri
 4. 评论后需要后台提醒
 5. 评论区 android 和 vue 两个方案中选择一个
 6. BaseResponse 基类以及 News（后期可能会修改名称为 Article）中对应云端默认值为空的处理
+7. article 头像的阴影制作
 
 9/10 由于 9/9 号还有大量的任务没有完成，所以 9/10 号不设置任务
+
+Failed to connect server!
+
+Url 出了问题
+
+com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 37 path $.data
+
+BaseResponse 里面的 data 是 object，前后的 Type  和 BaseResponse 不一致
+
+9/11 号
+1. 首要任务，关注功能的后端实现
+   1. 修改 HTML 模板，舍弃原有 HTML 生成头像（记得加入 Git 管理，避免后期可能会返回存在头像的版本）
+   2. 后端 new 表或者 new 接口返回数据应该有作者名称
+   3. 点击关注后关注表新增数据的一系列后端实现
+2. 次要任务
+   1. 跳转到用户页面时的账号和粉丝数量的获取的后端 API 实现
+   2. 当封面图为空时，文章标题应该自动延伸至 item 末尾
+
+其他需要完善的，
+1. 回复框的解耦，不需要每个评论配置一个回复框
+2. 评论区样式修改
+3. 评论区点赞功能的实现
+4. 评论后需要后台提醒
+5. BaseResponse 基类以及 News（后期可能会修改名称为 Article）中对应云端默认值为空的处理
+6. article 头像的阴影制作
+7. okhttp 同步请求的实现

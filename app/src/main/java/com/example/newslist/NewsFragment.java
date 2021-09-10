@@ -98,7 +98,10 @@ public class NewsFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), NewsContentActivity.class);
                 intent.putExtra(Constants.ARTICLE_URL_KEY, newsData.get(position).getArticle());
-                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY,newsData.get(position).getaId());
+                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY,newsData.get(position).getAuthorId());
+                intent.putExtra(Constants.ARTICLE_NAME_KEY,newsData.get(position).getTitle());
+                // 用户系统还没写完，先用测试版本代替
+                intent.putExtra("testUserKey",1005);
                 startActivity(intent);
             }
         });
