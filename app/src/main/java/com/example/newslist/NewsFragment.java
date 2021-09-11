@@ -70,7 +70,7 @@ public class NewsFragment extends Fragment {
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                refreshData();
+                refreshData();
             }
         });
         return rootView;
@@ -97,11 +97,14 @@ public class NewsFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+                // 一条条 put 太麻烦了
                 intent.putExtra(Constants.ARTICLE_URL_KEY, newsData.get(position).getArticle());
-                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY,newsData.get(position).getAuthorId());
-                intent.putExtra(Constants.ARTICLE_NAME_KEY,newsData.get(position).getTitle());
-                // 用户系统还没写完，先用测试版本代替
-                intent.putExtra("testUserKey",1005);
+                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, newsData.get(position).getAuthorId());
+                intent.putExtra(Constants.ARTICLE_NAME_KEY, newsData.get(position).getTitle());
+                intent.putExtra(Constants.AUTHOR_NAME_KEY, newsData.get(position).getUser_name());
+                intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, newsData.get(position).getUser_account());
+                intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, newsData.get(position).getAuthorHeadUrl());
+                intent.putExtra("testUserKey", 1005);
                 startActivity(intent);
             }
         });

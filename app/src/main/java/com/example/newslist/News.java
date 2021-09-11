@@ -4,6 +4,33 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class News {
+    public String getUser_account() {
+        return user_account;
+    }
+
+    public void setUser_account(String user_account) {
+        this.user_account = user_account;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getArticle_cover_url() {
+        return article_cover_url;
+    }
+
+    public void setArticle_cover_url(String article_cover_url) {
+        this.article_cover_url = article_cover_url;
+    }
+
+    private String article_cover_url;
+    private String user_account;
+    private String user_name;
     @SerializedName("new_id")
     private Integer aId;
     @SerializedName("new_name")
@@ -12,7 +39,7 @@ public class News {
     private String article;
     @SerializedName("new_owner_id")
     private Integer authorId;
-    @SerializedName("new_owner_head_url")
+    @SerializedName("user_head")
     private String authorHeadUrl;
 
     public Integer getaId() {

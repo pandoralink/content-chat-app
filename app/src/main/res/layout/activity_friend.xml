@@ -51,7 +51,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/tv_subtitle"
+            android:id="@+id/tv_account"
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

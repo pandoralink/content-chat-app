@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 /**
@@ -63,9 +65,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         News news = mNewsData.get(position);
         holder.tvTitle.setText(news.getTitle());
-        // 后端那边还没有设置作者名称，先用 id 来代替
-        if (news.getaId() != null) {
-            holder.tvAuthor.setText(Integer.toString(news.getaId()));
+        if (news.getUser_name() != null) {
+            holder.tvAuthor.setText(news.getUser_name());
+        }
+        if (news.getArticle_cover_url().isEmpty()) {
+            holder.ivImage.setVisibility(View.GONE);
+        } else {
+            Glide.with(mContext).load(news.getArticle_cover_url()).into(holder.ivImage);
         }
 
         if (mOnItemClickListener != null) {
@@ -83,11 +89,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 }
             });
         }
-
-        // 封面图片还没有先不设置
-//        if (news.getImageId() != -1) {
-//            holder.ivImage.setImageResource(news.getImageId());
-//        }
     }
 
     @Override

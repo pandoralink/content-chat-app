@@ -13,10 +13,11 @@ import com.bumptech.glide.Glide;
 import com.example.newslist.R;
 import com.example.newslist.data.Constants;
 import com.example.newslist.message.MsgContentActivity;
-import com.example.newslist.news.NewsContentActivity;
 
 public class FriendActivity extends AppCompatActivity {
     Boolean userRelate;
+    int fanTotal;
+    String userAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +28,16 @@ public class FriendActivity extends AppCompatActivity {
         ImageView iv_author_head = findViewById(R.id.iv_author_head);
         TextView tvAuthorName = findViewById(R.id.tv_title);
         Button btnFollow = findViewById(R.id.btn_follow_user);
+        TextView tvAccount = findViewById(R.id.tv_account);
+        TextView tvFanNum = findViewById(R.id.tv_fan_num);
         String authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
         String authorHeadUrl = intent.getStringExtra(Constants.AUTHOR_HEAD_URL_KEY);
-        userRelate = intent.getBooleanExtra(Constants.USER_RELATE_KEY,false);
+
+        userRelate = intent.getBooleanExtra(Constants.USER_RELATE_KEY, false);
+        fanTotal = intent.getIntExtra(Constants.AUTHOR_FAN_TOTAL_KEY, 0);
+        userAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
+        tvFanNum.setText(Integer.toString(fanTotal) + " 粉丝");
+        tvAccount.setText(userAccount);
         tvAuthorName.setText(authorName);
         Glide.with(FriendActivity.this).load(authorHeadUrl).into(iv_author_head);
         if (userRelate) {

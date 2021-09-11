@@ -3,28 +3,17 @@ package com.example.newslist.news;
 import com.google.gson.annotations.SerializedName;
 
 public class AuthorInfoRequest {
-    @SerializedName("authorName")
-    private String authorName;
-    @SerializedName("authorHeadUrl")
-    private String authorHeadUrl;
+    public int getFanTotal() {
+        return fanTotal;
+    }
+
+    public void setFanTotal(int fanTotal) {
+        this.fanTotal = fanTotal;
+    }
+
+    private int fanTotal;
     @SerializedName("relate")
     private Boolean authorRelate;
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
-    }
-
-    public String getAuthorHeadUrl() {
-        return authorHeadUrl;
-    }
-
-    public void setAuthorHeadUrl(String authorHeadUrl) {
-        this.authorHeadUrl = authorHeadUrl;
-    }
 
     public Boolean getAuthorRelate() {
         return authorRelate;

@@ -18,5 +18,7 @@ public final class Constants {
     public static String ARTICLE_NAME_KEY = "article_name_key";
     public static String AUTHOR_NAME_KEY = "author_name_key";
     public static String AUTHOR_HEAD_URL_KEY = "author_head_url_key";
+    public static String AUTHOR_ACCOUNT_KEY = "author_account_key";
     public static String USER_RELATE_KEY = "user_relate_key";
+    public static String AUTHOR_FAN_TOTAL_KEY = "user_relate_key";
 }

@@ -26,18 +26,23 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class NewsContentActivity extends AppCompatActivity {
 
-    private String TAG = "PW";
+    private final String TAG = "PW";
     private String articleUrl;
     private String authorName;
+    private String authorAccount;
     private String authorHeadUrl;
-    private Boolean userRelate;
-    ImageView iv_author_head;
+    private Boolean userRelate = false;
+    private int authorId;
+    private int userId;
+    ImageView ivAuthorHead;
+    Button btnFollow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +50,17 @@ public class NewsContentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_content);
 
         ImageView ivNewContentBack = findViewById(R.id.iv_new_content_back);
-        ivNewContentBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
+        btnFollow = findViewById(R.id.btn_follow);
+        ivNewContentBack.setOnClickListener(view -> finish());
+        btnFollow.setOnClickListener(view -> {
+            if (userRelate) {
+                cancelFollow();
+            } else {
+                follow();
             }
         });
+
         initData();
-
-
     }
 
     private okhttp3.Callback callback = new okhttp3.Callback() {
@@ -68,46 +75,30 @@ public class NewsContentActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         Type jsonType = new TypeToken<BaseResponse<AuthorInfoRequest>>() {
                         }.getType();
-                        BaseResponse<AuthorInfoRequest> AuthorInfoResponse = gson.fromJson(body, jsonType);
-                        AuthorInfoRequest authorInfoRequest = (AuthorInfoRequest) AuthorInfoResponse.getData();
-                        ImageView iv_author_head = findViewById(R.id.iv_author_head);
-                        TextView tvAuthorName = findViewById(R.id.tv_author_name);
-                        Button btnFollow = findViewById(R.id.btn_follow);
-                        authorName = authorInfoRequest.getAuthorName();
-                        authorHeadUrl = authorInfoRequest.getAuthorHeadUrl();
+                        BaseResponse<AuthorInfoRequest> authorInfoResponse = gson.fromJson(body, jsonType);
+                        AuthorInfoRequest authorInfoRequest = (AuthorInfoRequest) authorInfoResponse.getData();
                         userRelate = authorInfoRequest.getAuthorRelate();
-                        iv_author_head.setOnClickListener(new View.OnClickListener() {
+                        int total = authorInfoRequest.getFanTotal();
+                        ivAuthorHead.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(getApplicationContext(), FriendActivity.class);
                                 intent.putExtra(Constants.AUTHOR_NAME_KEY, authorName);
                                 intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, authorHeadUrl);
+                                intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, authorAccount);
                                 intent.putExtra(Constants.USER_RELATE_KEY, userRelate);
+                                intent.putExtra(Constants.AUTHOR_FAN_TOTAL_KEY, total);
                                 startActivity(intent);
                             }
                         });
-                        tvAuthorName.setText(authorName);
-                        Glide.with(NewsContentActivity.this).load(authorHeadUrl).into(iv_author_head);
                         if (userRelate) {
                             btnFollow.setText("√已关注");
                         } else {
                             btnFollow.setText("+关注");
                         }
-                        btnFollow.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                userRelate = !userRelate;
-                                if (userRelate) {
-                                    btnFollow.setText("√已关注");
-                                } else {
-                                    btnFollow.setText("+关注");
-                                }
-                            }
-                        });
                         initView();
                     }
                 });
-            } else {
             }
         }
 
@@ -120,25 +111,32 @@ public class NewsContentActivity extends AppCompatActivity {
 
     private void initData() {
         Intent intent = getIntent();
-        int authorId = intent.getIntExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, 0);
+        authorId = intent.getIntExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, 0);
+        userId = intent.getIntExtra("testUserKey", 0);
+        TextView tvNewName = findViewById(R.id.tv_new_name);
+        TextView tvAuthorName = findViewById(R.id.tv_author_name);
+        ivAuthorHead = findViewById(R.id.iv_author_head);
+
         articleUrl = intent.getStringExtra(Constants.ARTICLE_URL_KEY);
-        int userId = intent.getIntExtra("testUserKey", 0);
-        TextView tv_new_name = findViewById(R.id.tv_new_name);
-        tv_new_name.setText(intent.getStringExtra(Constants.ARTICLE_NAME_KEY));
+        authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
+        authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
+        authorHeadUrl = intent.getStringExtra(Constants.AUTHOR_HEAD_URL_KEY);
+        authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
+        tvNewName.setText(intent.getStringExtra(Constants.ARTICLE_NAME_KEY));
+        tvAuthorName.setText(authorName);
+        Glide.with(NewsContentActivity.this).load(authorHeadUrl).into(ivAuthorHead);
+
         if (authorId == 0 || userId == 0) {
         } else {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Request request = new Request.Builder()
-                            .url(Constants.ARTICLE_AUTHOR_INFO_BASE_URL + "?blogger_id=" + authorId + "&fan_id=" + userId)
-                            .get().build();
-                    try {
-                        OkHttpClient client = new OkHttpClient();
-                        client.newCall(request).enqueue(callback);
-                    } catch (NetworkOnMainThreadException ex) {
-                        ex.printStackTrace();
-                    }
+            new Thread(() -> {
+                Request request = new Request.Builder()
+                        .url(Constants.ARTICLE_AUTHOR_INFO_BASE_URL + "?blogger_id=" + authorId + "&fan_id=" + userId)
+                        .get().build();
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    client.newCall(request).enqueue(callback);
+                } catch (NetworkOnMainThreadException ex) {
+                    ex.printStackTrace();
                 }
             }).start();
         }
@@ -171,34 +169,77 @@ public class NewsContentActivity extends AppCompatActivity {
                 }
             }
         });
-        webView.getSettings().
-
-                setJavaScriptEnabled(true);
-        webView.getSettings().
-
-                setDomStorageEnabled(true);// 打开本地缓存提供JS调用,至关重要
-        webView.getSettings().
-
-                setAppCacheMaxSize(1024 * 1024 * 8);// 实现8倍缓存
-        webView.getSettings().
-
-                setAllowFileAccess(true);
-        webView.getSettings().
-
-                setAppCacheEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
+        // 打开本地缓存提供JS调用,至关重要
+        webView.getSettings().setDomStorageEnabled(true);
+        // 实现8倍缓存
+        webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setAppCacheEnabled(true);
 
         String appCachePath = getApplication().getCacheDir().getAbsolutePath();
-        webView.getSettings().
-
-                setAppCachePath(appCachePath);
+        webView.getSettings().setAppCachePath(appCachePath);
         webView.getSettings().
 
                 setDatabaseEnabled(true);
         /* 设置WebView属性,运行执行js脚本 */
-        webView.getSettings().
-
-                setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
         /* //调用loadUrl方法为WebView加入链接 */
         webView.loadUrl(articleUrl);
+    }
+
+    private void follow() {
+        new Thread(() -> {
+            // 不想继续再 Constant 里面定义 Key
+            String url = Constants.BACK_BASE_URL + "addFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
+            OkHttpClient okHttpClient = new OkHttpClient();
+            final Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "onFailure: ");
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        runOnUiThread(() -> {
+                            userRelate = true;
+                            btnFollow.setText("√已关注");
+                        });
+                    }
+                }
+            });
+        }).start();
+    }
+
+    private void cancelFollow() {
+        new Thread(() -> {
+            String url = Constants.BACK_BASE_URL + "cancelFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
+            OkHttpClient okHttpClient = new OkHttpClient();
+            final Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "onFailure: ");
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        runOnUiThread(() -> {
+                            userRelate = false;
+                            btnFollow.setText("+关注");
+                        });
+                    }
+                }
+            });
+        }).start();
     }
 }
