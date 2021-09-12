@@ -30,6 +30,7 @@
             android:textSize="20sp" />
 
         <RadioButton
+            android:id="@+id/rb_not_like"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

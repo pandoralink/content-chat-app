@@ -91,7 +91,17 @@ public class NewsFragment extends Fragment {
         newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
-                new OperationDialogFragment().show(getActivity().getSupportFragmentManager(), "OperationDialogFragment");
+                OperationDialogFragment operationDialogFragment = new OperationDialogFragment();
+                operationDialogFragment.articleUrl = newsData.get(position).getArticle();
+                operationDialogFragment.itemIndex = position;
+                operationDialogFragment.setOnNotLikeClickListener(new OperationDialogFragment.OnNotLikeClickListener() {
+                    @Override
+                    public void onClick(int position) {
+                        newsData.remove(position);
+                        newsAdapter.notifyDataSetChanged();
+                    }
+                });
+                operationDialogFragment.show(getActivity().getSupportFragmentManager(), "OperationDialogFragment");
             }
 
             @Override

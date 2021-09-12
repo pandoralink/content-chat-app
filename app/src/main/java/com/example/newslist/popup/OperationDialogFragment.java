@@ -1,16 +1,23 @@
 package com.example.newslist.popup;
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -20,6 +27,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class OperationDialogFragment extends BottomSheetDialogFragment {
     private Dialog dialog;
     View rootView;
+    public String articleUrl;
+    private String TAG = "PW";
+    private OnNotLikeClickListener onNotLikeClickListener;
+    public int itemIndex;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +54,33 @@ public class OperationDialogFragment extends BottomSheetDialogFragment {
             rootView = inflater.inflate(R.layout.fragment_operation_dialog, container, false);
         }
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300));
+
+        RadioButton rbNews = rootView.findViewById(R.id.rb_news);
+        RadioButton rbNotLike = rootView.findViewById(R.id.rb_not_like);
+
+        rbNews.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText(null, articleUrl);
+            clipboard.setPrimaryClip(clipData);
+        });
+        rbNotLike.setOnClickListener(v -> {
+            if(onNotLikeClickListener != null) {
+                this.onNotLikeClickListener.onClick(itemIndex);
+            }
+            this.dismiss();
+        });
         return rootView;
+    }
+
+    public interface OnNotLikeClickListener {
+        /**
+         * 用户点击不感兴趣
+         * @param position
+         */
+        void onClick(int position);
+    }
+
+    public void setOnNotLikeClickListener(OnNotLikeClickListener onNotLikeClickListener) {
+        this.onNotLikeClickListener = onNotLikeClickListener;
     }
 }

@@ -117,4 +117,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         notifyItemRangeChanged(0, mNewsData.size());
     }
 
+    public void deleteIndex(int position) {
+        mNewsData.remove(position);
+        notifyItemRangeChanged(0, mNewsData.size());
+    }
+
 }
