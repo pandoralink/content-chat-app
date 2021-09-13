@@ -21,4 +21,5 @@ public final class Constants {
     public static String AUTHOR_ACCOUNT_KEY = "author_account_key";
     public static String USER_RELATE_KEY = "user_relate_key";
     public static String AUTHOR_FAN_TOTAL_KEY = "user_relate_key";
+    public static String LOCAL_WEBSOCKET_URL = "ws://10.0.2.2:8181";
 }

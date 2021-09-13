@@ -303,6 +303,23 @@ android.content.res.Resources$NotFoundException: String resource ID #0x2b
 
 1. 需要爬取更多的数据
 
+9/13 号
+
+1. 主要任务
+   1. 评论后需要后台提醒（websoket）
+   2. 点击到用户信息栏后需要返回相应的文章信息
+2. 次要任务
+   1. 评论区样式修改（回复框应该在页面底部，fix）
+   2. 评论区点赞功能的实现
+
+**其他需要完善的**
+
+1. 需要爬取更多的数据
+
+9/14 号
+
+websoket 进度竟然才刚开始！继续维持原有的任务
+
 # 问题
 
 RecyclerView Item 跳转 Activity https://ask.csdn.net/questions/645359
@@ -352,3 +369,5 @@ Url 出了问题
 com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 37 path $.data
 
 BaseResponse 里面的 data 是 object，前后的 Type 和 BaseResponse 不一致
+
+android 虚拟机一直访问失败，连接 websocket 直接跳转到 onFailure()，原因是连接 websocket 使用的链接是 `localhost:port`，这样只会连接到虚拟机本身的 `localhost:port`！！！困扰我一整天，解决方法是将 localhost 改成 10.0.0.2 或者你 cmd 查出来的 ip
