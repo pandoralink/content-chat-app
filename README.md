@@ -320,6 +320,10 @@ android.content.res.Resources$NotFoundException: String resource ID #0x2b
 
 websoket 进度竟然才刚开始！继续维持原有的任务
 
+9/15 号
+
+websocket 难度有点大，很多东西没搞明白，先不去做服务之类的，完成评论后台提醒的功能就行了，明天完成应该没问题
+
 # 问题
 
 RecyclerView Item 跳转 Activity https://ask.csdn.net/questions/645359

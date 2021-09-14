@@ -1,13 +1,19 @@
 package com.example.newslist.message;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +52,7 @@ public class MsgFragment extends Fragment {
     private RecyclerView rvMessagesList;
     private String[] friendNames = null;
     private String[] firstMsgs = null;
+    private static final String CHANNEL_ID = "comment channel";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +60,7 @@ public class MsgFragment extends Fragment {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_msg, container, false);
         }
+        Log.i(TAG, "onCreate: " + "是否重新创建");
 
         rvMessagesList = rootView.findViewById(R.id.rv_msg_list);
 
@@ -70,7 +78,6 @@ public class MsgFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rvMessagesList.setLayoutManager(llm);
         rvMessagesList.setAdapter(messagesAdapter);
-        initWebSocket();
 
         return rootView;
     }
@@ -105,57 +112,6 @@ public class MsgFragment extends Fragment {
             message.setHead(images.getResourceId(i, 0));
 
             messagesData.add(message);
-        }
-    }
-
-    private WebSocket mWebSocket;
-
-
-    private WebSocketListener webSocketListener = new WebSocketListener() {
-        @Override
-        public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
-            super.onOpen(webSocket, response);
-            Log.e(TAG, "连接成功");
-        }
-
-        @Override
-        public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
-            super.onMessage(webSocket, text);
-            Log.e(TAG, "连接成功");
-        }
-
-        @Override
-        public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-            super.onClosing(webSocket, code, reason);
-            Log.d(TAG, "连接关闭");
-        }
-
-        @Override
-        public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-            super.onClosed(webSocket, code, reason);
-            Log.d(TAG, "连接关闭");
-        }
-
-        @Override
-        public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
-            super.onFailure(webSocket, t, response);
-            Log.e(TAG, "连接失败");
-        }
-    };
-
-    private void initWebSocket() {
-        String wsUrl = Constants.LOCAL_WEBSOCKET_URL;
-        //构造request对象
-        Request request = new Request.Builder()
-                .url(wsUrl)
-                .build();
-        try {
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .pingInterval(10, TimeUnit.SECONDS)
-                    .build();
-            client.newWebSocket(request, webSocketListener);
-        } catch (NetworkOnMainThreadException ex) {
-            ex.printStackTrace();
         }
     }
 }
