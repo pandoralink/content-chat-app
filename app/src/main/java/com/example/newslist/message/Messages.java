@@ -28,7 +28,21 @@ public class Messages {
         this.head = head;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     private String friendName;
     private String firstMsg;
     private int head;
+    /**
+     * type：1 信息
+     * type：2 通知
+     * 默认值为 1
+     */
+    private int type = 1;
 }

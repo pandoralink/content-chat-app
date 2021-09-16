@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -20,15 +21,19 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.newslist.createNew.CreateNewFragment;
 import com.example.newslist.data.Constants;
+import com.example.newslist.data.MsgTip;
 import com.example.newslist.message.Messages;
 import com.example.newslist.message.MsgFragment;
 import com.example.newslist.news.ArticleFragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "PW";
     private static final String CHANNEL_ID = "Music channel";
     private static int defaultPage = 0;
+    Gson gson = new Gson();
+    MsgFragment msgFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +72,10 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         mViewPager = findViewById(R.id.vp_content);
         rgTabBar = findViewById(R.id.rl_tab_bar);
+        msgFragment = new MsgFragment();
 
         fragments.add(new ArticleFragment());
-        fragments.add(new MsgFragment());
+        fragments.add(msgFragment);
         fragments.add(new CreateNewFragment());
         fragments.add(new UserFragment());
 
@@ -123,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
             super.onOpen(webSocket, response);
             Log.e(TAG, "连接成功");
-            // 发送 uid
+            // 发送 uid，暂时用 1005 代替
             webSocket.send(Integer.toString(1005));
         }
 
@@ -134,10 +142,8 @@ public class MainActivity extends AppCompatActivity {
             Messages message = new Messages();
             message.setFriendName("defaultName");
             message.setFirstMsg(text);
-//            messagesData.add(0, message);
-//            Handler handler = new Handler();
-//            handler.postDelayed(() -> messagesAdapter.notifyDataSetChanged(), 500);
-            sendNotification("测试通知");
+            MsgTip msgTip = gson.fromJson(text, MsgTip.class);
+            sendNotification(msgTip.getContent(), msgTip.getName());
         }
 
         @Override
@@ -175,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void sendNotification(String content) {
+    private void sendNotification(String content, String name) {
         Log.i(TAG, "sendNotification: " + content);
         Intent intent = new Intent();
         intent.putExtra("frgamentIndex", 1);
@@ -189,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                 .setAutoCancel(true)
                 // 设置该通知优先级
                 .setSmallIcon(R.drawable.ic_article_24)
-                .setContentTitle("服务器")
+                .setContentTitle(name + "回复了你")
                 .setContentText(content)
                 .setContentIntent(pendingIntent)
                 .setPriority(2)
@@ -205,5 +211,18 @@ public class MainActivity extends AppCompatActivity {
             notifyManager.createNotificationChannel(notificationChannel);
         }
         notifyManager.notify(1, notification);//id要保证唯一
+        Messages messages = new Messages();
+        messages.setFriendName(name + "回复了你");
+        messages.setFirstMsg(content);
+        messages.setType(2);
+        msgFragment.addTip(messages);
+    }
+
+    private void test() {
+        Messages messages = new Messages();
+        messages.setFriendName("name" + "回复了你");
+        messages.setFirstMsg("content");
+        messages.setType(2);
+        msgFragment.addTip(messages);
     }
 }

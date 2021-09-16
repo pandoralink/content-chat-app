@@ -6,44 +6,44 @@
     android:layout_height="match_parent"
     tools:context=".NewsFragment">
 
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/rl_nav_bar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:background="@drawable/nav_bar_border"-->
-<!--        android:padding="10dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/swipe"-->
-<!--        app:layout_constraintTop_toTopOf="parent">-->
+    <!--    <RelativeLayout-->
+    <!--        android:id="@+id/rl_nav_bar"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentTop="true"-->
+    <!--        android:background="@drawable/nav_bar_border"-->
+    <!--        android:padding="10dp"-->
+    <!--        app:layout_constraintBottom_toTopOf="@id/swipe"-->
+    <!--        app:layout_constraintTop_toTopOf="parent">-->
 
-<!--        <RelativeLayout-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_centerInParent="true">-->
+    <!--        <RelativeLayout-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_centerInParent="true">-->
 
-<!--            <TextView-->
-<!--                android:id="@+id/follow"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="关注"-->
-<!--                android:textSize="20sp" />-->
+    <!--            <TextView-->
+    <!--                android:id="@+id/follow"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="关注"-->
+    <!--                android:textSize="20sp" />-->
 
-<!--            <TextView-->
-<!--                android:id="@+id/recommend"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="20dp"-->
-<!--                android:layout_toRightOf="@id/follow"-->
-<!--                android:text="推荐"-->
-<!--                android:textSize="20sp" />-->
-<!--        </RelativeLayout>-->
+    <!--            <TextView-->
+    <!--                android:id="@+id/recommend"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginLeft="20dp"-->
+    <!--                android:layout_toRightOf="@id/follow"-->
+    <!--                android:text="推荐"-->
+    <!--                android:textSize="20sp" />-->
+    <!--        </RelativeLayout>-->
 
-<!--        <ImageView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:src="@drawable/search" />-->
-<!--    </RelativeLayout>-->
+    <!--        <ImageView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_alignParentRight="true"-->
+    <!--            android:src="@drawable/search" />-->
+    <!--    </RelativeLayout>-->
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rl_nav_bar">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lv_news_list"

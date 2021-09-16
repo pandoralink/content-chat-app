@@ -139,6 +139,7 @@ user_id user_new_url new_comment_id
 3. 点击任意评论区用户后再回复文章，正确的 `currentReplyId` 应该为 0
 
 如何去避免 `currentReplyId` 点击任意评论区用户恢复 `currentReplyId` 的正确状态呢？
+
 1. 第一种方案，发出一条评论后，`currentReplyId` 置 0
    1. √
    2. √
@@ -152,7 +153,9 @@ user_id user_new_url new_comment_id
    1. √
    2. √
    3. √
-5. 第五种方案，第四种方案有缺点就是，用户评论时可能会二次点击评论框，此时 `currentReplyId` 置 0，第二种回复情况失效，解决方案是，回复的时候设置一个 `flag`，如果 flag 为真，则此时再次点击评论区则不会置 0，如果评论区失去焦点则 flag = false 并且置 0，
+5. 第五种方案，第四种方案有缺点就是，用户评论时可能会二次点击评论框，此时 `currentReplyId` 置 0，第二种回复情况失效，解决方案是，回复的时候设置一个 `flag`，如果 flag 为真，则此时再次点击评论区则不会置 0，如果评论区失去焦点则 flag = false（注意不要在此步置 0 否则回复时失去焦点会导致置 0）。
+6. 第六种方案，在试用第五种方案的时候发现即使是失去焦点后没有主动置 0，最后的 currentReplyId 也会被置 0，这是因为按钮属于 `<post-comment>` 点击按钮也属于点击 `<post-comment>`，导致原先 click 置 0 函数的触发，因此我们将 click 函数内嵌进组件的 `<input>` 中并 emit 出来就可以解决这个问题
+
 ## 评论系统数据库设计
 
 点赞功能先不做，有如下问题
@@ -289,15 +292,15 @@ android.content.res.Resources$NotFoundException: String resource ID #0x2b
 9/12 号
 
 1. 主要任务
-   1. 回复框的解耦，不需要每个评论配置一个回复框 2021年9月12日23点58分
+   1. 回复框的解耦，不需要每个评论配置一个回复框 2021 年 9 月 12 日 23 点 58 分
    2. 评论后需要后台提醒
    3. 评论区样式修改
 2. 次要任务
    1. 评论区点赞功能的实现
    2. 点击到用户信息栏后需要返回相应的文章信息
    3. 长按相应的新闻后出现的功能栏实现
-      1. 复制链接 2021年9月13日00点22分
-      2. 不感兴趣 2021年9月13日00点47分
+      1. 复制链接 2021 年 9 月 13 日 00 点 22 分
+      2. 不感兴趣 2021 年 9 月 13 日 00 点 47 分
 
 **其他需要完善的**
 
@@ -323,6 +326,31 @@ websoket 进度竟然才刚开始！继续维持原有的任务
 9/15 号
 
 websocket 难度有点大，很多东西没搞明白，先不去做服务之类的，完成评论后台提醒的功能就行了，明天完成应该没问题
+
+9/15 号
+
+14 号玩的太多，没做完
+
+1. 主要任务
+   1. 提醒跳转到相应页面
+   2. 点击到用户信息栏后需要返回相应的文章信息 2021 年 9 月 16 日 22 点 40 分
+   3. 评论区样式修改（回复框应该在页面底部，fix）2021 年 9 月 17 日 01 点 01 分
+2. 次要任务
+   1. 评论区点赞功能的实现
+
+**其他需要完善的**
+
+3. 需要爬取更多的数据
+
+9/17 号
+
+1. 主要任务
+   1. 提醒跳转到相应页面
+   2. 评论的样式修改（CSS 真 TM 麻烦）
+   3. 报告
+2. 次要任务
+   1. 评论区点赞功能的实现
+   2. 需要爬取更多的数据
 
 # 问题
 
@@ -375,3 +403,11 @@ com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected B
 BaseResponse 里面的 data 是 object，前后的 Type 和 BaseResponse 不一致
 
 android 虚拟机一直访问失败，连接 websocket 直接跳转到 onFailure()，原因是连接 websocket 使用的链接是 `localhost:port`，这样只会连接到虚拟机本身的 `localhost:port`！！！困扰我一整天，解决方法是将 localhost 改成 10.0.0.2 或者你 cmd 查出来的 ip
+
+问题 1：failed to decrypt safe contents entry: java.io.IOException: getSecretKey failed: Password is not ASCII
+取消 remember password！！！手动输入密码
+
+问题 2：buildOutput.apkData must not be null
+切换一下 apk 文件的输出路径！
+
+[No key with alias '**_' found in keystore _** 解决方法](https://blog.csdn.net/jack22001/article/details/85319308)

@@ -1,44 +1,21 @@
 package com.example.newslist.message;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-
-import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Handler;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.newslist.News;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.newslist.R;
-import com.example.newslist.data.Constants;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
 
 
 /**
@@ -70,8 +47,15 @@ public class MsgFragment extends Fragment {
         messagesAdapter.setOnItemClickListener(new MessagesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), MsgContentActivity.class);
-                startActivity(intent);
+                if (messagesData.get(position).getType() == 1) {
+                    Intent intent = new Intent(getActivity(), MsgContentActivity.class);
+                    startActivity(intent);
+                } else {
+//                    会跳转到文章页面
+//                    Intent intent = new Intent(getActivity(), MsgContentActivity.class);
+//                    startActivity(intent);
+                }
+
             }
         });
 
@@ -113,5 +97,11 @@ public class MsgFragment extends Fragment {
 
             messagesData.add(message);
         }
+    }
+
+    public void addTip(Messages messages) {
+        Log.d(TAG, "addTip: " + "in");
+        messagesData.add(0, messages);
+        messagesAdapter.notifyDataSetChanged();
     }
 }
