@@ -25,7 +25,29 @@ public class MsgTip {
         this.name = name;
     }
 
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
+    }
+
+    public String getContentUrl() {
+        return contentUrl;
+    }
+
+    public void setContentUrl(String contentUrl) {
+        this.contentUrl = contentUrl;
+    }
+
     private int id;
     private String content;
     private String name;
+    /**
+     * 参考 Messages.class 中
+     * 相关字段的介绍
+     */
+    private String headUrl = "";
+    private String contentUrl = "";
 }

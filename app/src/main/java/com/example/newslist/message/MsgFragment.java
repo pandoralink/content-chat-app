@@ -7,12 +7,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.newslist.R;
+import com.example.newslist.data.Constants;
+import com.example.newslist.user.FriendActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +56,17 @@ public class MsgFragment extends Fragment {
                     startActivity(intent);
                 } else {
 //                    会跳转到文章页面
-//                    Intent intent = new Intent(getActivity(), MsgContentActivity.class);
-//                    startActivity(intent);
+                    Intent intent = new Intent(getActivity(), MsgContentActivity.class);
+                    intent.putExtra(Constants.ARTICLE_URL_KEY, messagesData.get(position).getContentUrl());
+//                    下面这些后面再请求
+//                    intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, messagesData.get(position).getAuthorId());
+//                    intent.putExtra(Constants.ARTICLE_NAME_KEY, messagesData.get(position).getTitle());
+//                    intent.putExtra(Constants.AUTHOR_NAME_KEY, messagesData.get(position).getUser_name());
+//                    intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, messagesData.get(position).getUser_account());
+//                    intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, messagesData.get(position).getAuthorHeadUrl());
+                    intent.putExtra("testUserKey", 1005);
+                    startActivity(intent);
                 }
-
             }
         });
 

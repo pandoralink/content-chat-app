@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        defaultPage = getIntent().getIntExtra("frgamentIndex", 0);
+        defaultPage = getIntent().getIntExtra("fragmentIndex", 0);
         initViews();
         initWebSocket();
     }
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             message.setFriendName("defaultName");
             message.setFirstMsg(text);
             MsgTip msgTip = gson.fromJson(text, MsgTip.class);
-            sendNotification(msgTip.getContent(), msgTip.getName());
+            sendNotification(msgTip.getContent(), msgTip.getName(), msgTip.getHeadUrl(), msgTip.getContentUrl());
         }
 
         @Override
@@ -181,10 +181,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void sendNotification(String content, String name) {
+    private void sendNotification(String content, String name, String headUrl, String contentUrl) {
         Log.i(TAG, "sendNotification: " + content);
         Intent intent = new Intent();
-        intent.putExtra("frgamentIndex", 1);
+        intent.putExtra("fragmentIndex", 1);
         intent.setClass(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder =
@@ -215,14 +215,8 @@ public class MainActivity extends AppCompatActivity {
         messages.setFriendName(name + "回复了你");
         messages.setFirstMsg(content);
         messages.setType(2);
-        msgFragment.addTip(messages);
-    }
-
-    private void test() {
-        Messages messages = new Messages();
-        messages.setFriendName("name" + "回复了你");
-        messages.setFirstMsg("content");
-        messages.setType(2);
+        messages.setHeadUrl(headUrl);
+        messages.setContentUrl(contentUrl);
         msgFragment.addTip(messages);
     }
 }

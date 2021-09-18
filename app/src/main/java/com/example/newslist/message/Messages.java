@@ -36,6 +36,22 @@ public class Messages {
         this.type = type;
     }
 
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
+    }
+
+    public String getContentUrl() {
+        return contentUrl;
+    }
+
+    public void setContentUrl(String contentUrl) {
+        this.contentUrl = contentUrl;
+    }
+
     private String friendName;
     private String firstMsg;
     private int head;
@@ -45,4 +61,15 @@ public class Messages {
      * 默认值为 1
      */
     private int type = 1;
+    /**
+     * 消息/通知左侧图片链接
+     * 默认为 "" 此时会隐藏图片
+     */
+    private String headUrl = "";
+    /**
+     * 通知指引链接，一般为文章链接
+     * 消息的 contentUrl 为空
+     * 默认为 ""
+     */
+    private String contentUrl = "";
 }

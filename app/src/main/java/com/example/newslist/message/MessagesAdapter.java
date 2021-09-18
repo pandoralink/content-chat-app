@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.newslist.R;
 
 import java.util.List;
@@ -63,6 +64,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                     mOnItemClickListener.onItemClick(holder.itemView, position);
                 }
             });
+        }
+
+        if (!messagesData.get(position).getHeadUrl().isEmpty()) {
+            Glide.with(mContext).load(messagesData.get(position).getHeadUrl()).into(holder.head);
         }
 
         if (messages.getHead() != -1) {

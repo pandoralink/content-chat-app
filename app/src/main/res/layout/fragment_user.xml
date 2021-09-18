@@ -66,7 +66,7 @@
             android:layout_marginRight="8dp"
             android:clickable="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/in" />
+            android:src="@drawable/ic_in_24" />
 
         <View
             android:layout_width="wrap_content"
@@ -116,7 +116,7 @@
                 android:layout_marginRight="8dp"
                 android:clickable="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/in" />
+                android:src="@drawable/ic_in_24" />
 
             <View
                 android:layout_width="wrap_content"
@@ -159,7 +159,7 @@
                 android:layout_marginRight="8dp"
                 android:clickable="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/in" />
+                android:src="@drawable/ic_in_24" />
 
             <View
                 android:layout_width="wrap_content"
