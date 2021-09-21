@@ -41,6 +41,7 @@ public class NewsContentActivity extends AppCompatActivity {
     private Boolean userRelate = false;
     private int authorId;
     private int userId;
+    private int articleID;
     ImageView ivAuthorHead;
     Button btnFollow;
 
@@ -111,6 +112,8 @@ public class NewsContentActivity extends AppCompatActivity {
 
     private void initData() {
         Intent intent = getIntent();
+        articleID = intent.getIntExtra("NewIDKey", 0);
+        Log.d(TAG, "文章ID：" + articleID);
         authorId = intent.getIntExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, 0);
         userId = intent.getIntExtra("testUserKey", 0);
         TextView tvNewName = findViewById(R.id.tv_new_name);
@@ -156,10 +159,12 @@ public class NewsContentActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 String userName = "豪哥";
-                String js = "window.localStorage.setItem('userName','" + userName + "');";
+                String js = "javascript:window.localStorage.setItem('userName','" + userName + "');" +
+                        "window.localStorage.setItem('newId','" + articleID + "');";
                 String jsUrl = "javascript:(function({ " +
                         "var localStorage = window.localStorage; " +
                         "localStorage.setItem('userName', '" + userName + "') " +
+                        "localStorage.setItem('newId', '" + articleID + "') " +
                         "})()";
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     view.evaluateJavascript(js, null);
@@ -176,15 +181,11 @@ public class NewsContentActivity extends AppCompatActivity {
         webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setAppCacheEnabled(true);
-
         String appCachePath = getApplication().getCacheDir().getAbsolutePath();
         webView.getSettings().setAppCachePath(appCachePath);
-        webView.getSettings().
-
-                setDatabaseEnabled(true);
+        webView.getSettings().setDatabaseEnabled(true);
         /* 设置WebView属性,运行执行js脚本 */
         webView.getSettings().setJavaScriptEnabled(true);
-        /* //调用loadUrl方法为WebView加入链接 */
         webView.loadUrl(articleUrl);
     }
 

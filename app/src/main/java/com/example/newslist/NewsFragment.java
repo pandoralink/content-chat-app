@@ -109,6 +109,7 @@ public class NewsFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), NewsContentActivity.class);
                 // 一条条 put 太麻烦了
                 intent.putExtra(Constants.ARTICLE_URL_KEY, newsData.get(position).getArticle());
+                intent.putExtra("NewIDKey",newsData.get(position).getaId());
                 intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, newsData.get(position).getAuthorId());
                 intent.putExtra(Constants.ARTICLE_NAME_KEY, newsData.get(position).getTitle());
                 intent.putExtra(Constants.AUTHOR_NAME_KEY, newsData.get(position).getUser_name());
