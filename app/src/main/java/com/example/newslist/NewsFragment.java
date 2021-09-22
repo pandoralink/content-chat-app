@@ -47,6 +47,7 @@ public class NewsFragment extends Fragment {
     private String[] titles = null;
     private String[] authors = null;
     private String CURRENT_URL;
+    private String a = "1";
 
     public NewsFragment() {
         CURRENT_URL = Constants.ARTICLE_URL;

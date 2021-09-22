@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -116,11 +117,16 @@ public class NewsContentActivity extends AppCompatActivity {
         Log.d(TAG, "文章ID：" + articleID);
         authorId = intent.getIntExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, 0);
         userId = intent.getIntExtra("testUserKey", 0);
+//        userName 和 userId 本来是全局，但由于登录系统还未完成暂时用此代替
+        String userName = "庞老闆";
+        String userHeadUrl = "http://116.63.152.202:5002/userHead/default_head.png";
         TextView tvNewName = findViewById(R.id.tv_new_name);
         TextView tvAuthorName = findViewById(R.id.tv_author_name);
         ivAuthorHead = findViewById(R.id.iv_author_head);
 
-        articleUrl = intent.getStringExtra(Constants.ARTICLE_URL_KEY);
+        articleUrl = intent.getStringExtra(Constants.ARTICLE_URL_KEY) + "?userId=" + userId +
+                "&userName=" + userName + "&userHeadUrl=" + userHeadUrl + "&newId=" + articleID;
+        Log.d(TAG, "initData: " + articleUrl);
         authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
         authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
         authorHeadUrl = intent.getStringExtra(Constants.AUTHOR_HEAD_URL_KEY);
@@ -158,34 +164,12 @@ public class NewsContentActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                String userName = "豪哥";
-                String js = "javascript:window.localStorage.setItem('userName','" + userName + "');" +
-                        "window.localStorage.setItem('newId','" + articleID + "');";
-                String jsUrl = "javascript:(function({ " +
-                        "var localStorage = window.localStorage; " +
-                        "localStorage.setItem('userName', '" + userName + "') " +
-                        "localStorage.setItem('newId', '" + articleID + "') " +
-                        "})()";
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    view.evaluateJavascript(js, null);
-                } else {
-                    view.loadUrl(jsUrl);
-                    view.reload();
-                }
             }
         });
-        webView.getSettings().setJavaScriptEnabled(true);
-        // 打开本地缓存提供JS调用,至关重要
-        webView.getSettings().setDomStorageEnabled(true);
-        // 实现8倍缓存
-        webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
-        webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setAppCacheEnabled(true);
-        String appCachePath = getApplication().getCacheDir().getAbsolutePath();
-        webView.getSettings().setAppCachePath(appCachePath);
-        webView.getSettings().setDatabaseEnabled(true);
         /* 设置WebView属性,运行执行js脚本 */
         webView.getSettings().setJavaScriptEnabled(true);
+        String a = "3";
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.loadUrl(articleUrl);
     }
 

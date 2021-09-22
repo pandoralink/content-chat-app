@@ -157,6 +157,7 @@ user_id user_new_url new_comment_id
 6. 第六种方案，在试用第五种方案的时候发现即使是失去焦点后没有主动置 0，最后的 currentReplyId 也会被置 0，这是因为按钮属于 `<post-comment>` 点击按钮也属于点击 `<post-comment>`，导致原先 click 置 0 函数的触发，因此我们将 click 函数内嵌进组件的 `<input>` 中并 emit 出来就可以解决这个问题
 
 评论的问题，部分新建评论创建后对其评论时会出现数据未渲染的情况，需要点一下原评论才能渲染，原因未知
+
 ## 评论系统数据库设计
 
 点赞功能先不做，有如下问题
@@ -382,6 +383,34 @@ websocket 难度有点大，很多东西没搞明白，先不去做服务之类�
    2. 后端代码迁移为 Spring Boot
 
 测试还是有点必要的，每次修改一些代码就要重新测试一遍（如果是手动测试就太麻烦了）
+
+9/19 号
+
+1. 主要任务
+   1. 优化 Android 端代码
+   2. 报告
+2. 次要任务
+   1. 后端代码迁移为 Spring Boot
+
+急需修复的 Bug，Android 中 java 与 webview 交互的方式太烂，导致评论区不能够很好的展示，预计换成 Nuxt.js 去渲染文章内容，要么就选择初始化 HTMl 文件时就固定 new_id
+
+9/22 号
+
+1. 修复评论区加载缓慢的 Bug
+
+将 Js and Java 通信方式由 LocalStorage 修改为 Url 参数，原因是 LocalStorage 数据传递必须在 onPageFinished() 中进行，而 onPageFinished() 的执行时间与浏览器中的 window.onload 触发的时间相同（实际测试中似乎还要慢上 1-10s），由于文章内容通常有许多外链图片，可能是 3-10M 不到，window.onload 执行完毕需要等待图片和其他杂七杂八的东西完成，因此 window.onload 执行完成时间非常久，网速慢得情况可能需要等待 10-30s（要是我看到一篇文章需要等那么久早就去看评论区了，但项目里面的评论区又需要等待 LocalStorage 的数据，而 LocalStorage 的数据又需要 window.onload 完成才能执行，简直死锁！谁 TM 看个评论区要等你 10-30s！！）
+
+而通过 Url 参数的方式，在 HTML、JS、CSS 脚本刚开始发过来的时候就可以去执行了
+
+2. 修复 `<post-comment>` and `comment` 组件不加载的问题
+
+由于 webview 很难调试，不知道里面加载时究竟发生了什么所以很难去判断是什么错误，在修复上一个 Bug 之后发现了另一个 Bug，就是 `<post-comment>` 竟然不能加载了，找了好久才发现误删了下面这行代码
+
+```java
+webView.getSettings().setJavaScriptEnabled(true);
+```
+
+没有这行代码，似乎就不能执行后续加载了，真 TM 傻逼啊，webview
 
 ## 移动端访问 PC 端开发页面
 
