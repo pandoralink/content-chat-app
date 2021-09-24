@@ -39,7 +39,7 @@
         android:layout_below="@id/rl_nav_bar">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/lv_news_list"
+            android:id="@+id/lv_article_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="none" />

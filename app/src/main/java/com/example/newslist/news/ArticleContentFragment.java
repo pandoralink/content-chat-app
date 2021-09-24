@@ -1,7 +1,6 @@
-package com.example.newslist;
+package com.example.newslist.news;
 
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
@@ -14,9 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.newslist.Articles;
+import com.example.newslist.News;
+import com.example.newslist.NewsAdapter;
+import com.example.newslist.R;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
-import com.example.newslist.news.NewsContentActivity;
 import com.example.newslist.popup.OperationDialogFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,7 +27,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -36,24 +37,24 @@ import okhttp3.Response;
 /**
  * @author 庞旺
  */
-public class NewsFragment extends Fragment {
+public class ArticleContentFragment extends Fragment {
 
     private static final String TAG = "PW";
     View rootView;
     private RecyclerView rvNewsList;
     private NewsAdapter newsAdapter;
-    private List<News> newsData;
+    private List<Articles> articlesData;
     private SwipeRefreshLayout swipe;
     private String[] titles = null;
     private String[] authors = null;
     private String CURRENT_URL;
     private String a = "1";
 
-    public NewsFragment() {
+    public ArticleContentFragment() {
         CURRENT_URL = Constants.ARTICLE_URL;
     }
 
-    public NewsFragment(String currentUrl) {
+    public ArticleContentFragment(String currentUrl) {
         CURRENT_URL = currentUrl;
     }
 
@@ -61,10 +62,10 @@ public class NewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (rootView == null) {
-            rootView = inflater.inflate(R.layout.news_fragment, container, false);
+            rootView = inflater.inflate(R.layout.article_content, container, false);
         }
 
-        rvNewsList = rootView.findViewById(R.id.lv_news_list);
+        rvNewsList = rootView.findViewById(R.id.lv_article_list);
 
         initData();
         swipe = rootView.findViewById(R.id.swipe);
@@ -87,18 +88,18 @@ public class NewsFragment extends Fragment {
     }
 
     private void initData() {
-        newsData = new ArrayList<>();
-        newsAdapter = new NewsAdapter(getContext(), R.layout.list_item, newsData);
+        articlesData = new ArrayList<>();
+        newsAdapter = new NewsAdapter(getContext(), R.layout.list_item, articlesData);
         newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
                 OperationDialogFragment operationDialogFragment = new OperationDialogFragment();
-                operationDialogFragment.articleUrl = newsData.get(position).getArticle();
+                operationDialogFragment.articleUrl = articlesData.get(position).getArticle();
                 operationDialogFragment.itemIndex = position;
                 operationDialogFragment.setOnNotLikeClickListener(new OperationDialogFragment.OnNotLikeClickListener() {
                     @Override
                     public void onClick(int position) {
-                        newsData.remove(position);
+                        articlesData.remove(position);
                         newsAdapter.notifyDataSetChanged();
                     }
                 });
@@ -109,13 +110,13 @@ public class NewsFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), NewsContentActivity.class);
                 // 一条条 put 太麻烦了
-                intent.putExtra(Constants.ARTICLE_URL_KEY, newsData.get(position).getArticle());
-                intent.putExtra("NewIDKey",newsData.get(position).getaId());
-                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, newsData.get(position).getAuthorId());
-                intent.putExtra(Constants.ARTICLE_NAME_KEY, newsData.get(position).getTitle());
-                intent.putExtra(Constants.AUTHOR_NAME_KEY, newsData.get(position).getUser_name());
-                intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, newsData.get(position).getUser_account());
-                intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, newsData.get(position).getAuthorHeadUrl());
+                intent.putExtra(Constants.ARTICLE_URL_KEY, articlesData.get(position).getArticle());
+                intent.putExtra("NewIDKey", articlesData.get(position).getaId());
+                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, articlesData.get(position).getAuthorId());
+                intent.putExtra(Constants.ARTICLE_NAME_KEY, articlesData.get(position).getTitle());
+                intent.putExtra(Constants.AUTHOR_NAME_KEY, articlesData.get(position).getUser_name());
+                intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, articlesData.get(position).getUser_account());
+                intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, articlesData.get(position).getAuthorHeadUrl());
                 intent.putExtra("testUserKey", 1005);
                 startActivity(intent);
             }
@@ -136,11 +137,11 @@ public class NewsFragment extends Fragment {
                     @Override
                     public void run() {
                         Gson gson = new Gson();
-                        Type jsonType = new TypeToken<BaseResponse<List<News>>>() {
+                        Type jsonType = new TypeToken<BaseResponse<List<Articles>>>() {
                         }.getType();
-                        BaseResponse<List<News>> newsListResponse = gson.fromJson(body, jsonType);
-                        for (News news : newsListResponse.getData()) {
-                            newsAdapter.add(news);
+                        BaseResponse<List<Articles>> newsListResponse = gson.fromJson(body, jsonType);
+                        for (Articles articles : newsListResponse.getData()) {
+                            newsAdapter.add(articles);
                         }
                         newsAdapter.notifyDataSetChanged();
                         swipe.setRefreshing(false);

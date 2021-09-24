@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.newslist.NewsFragment;
 import com.example.newslist.R;
 import com.example.newslist.data.Constants;
 import com.google.android.material.tabs.TabLayout;
@@ -45,14 +44,13 @@ public class ArticleFragment extends Fragment {
             tabLayout = rootView.findViewById(R.id.tl_tabs);
             vpArticleContent = rootView.findViewById(R.id.vp_article_content);
             List<Fragment> articleFragment = new ArrayList<>();
-            articleFragment.add(new NewsFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=1005"));
-            articleFragment.add(new NewsFragment());
+            articleFragment.add(new ArticleContentFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=1005"));
+            articleFragment.add(new ArticleContentFragment());
             vpArticleContent.setAdapter(new ArticleFragmentPagerAdapter(getChildFragmentManager(), articleFragment));
-            vpArticleContent.setOffscreenPageLimit(2);
+            vpArticleContent.setOffscreenPageLimit(1);
             vpArticleContent.setCurrentItem(1);
             tabLayout.setupWithViewPager(vpArticleContent);
         }
-
     }
 }
 

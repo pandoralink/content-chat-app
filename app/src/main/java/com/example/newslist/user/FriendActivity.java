@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.newslist.Articles;
 import com.example.newslist.News;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
@@ -43,7 +44,7 @@ public class FriendActivity extends AppCompatActivity {
     String userAccount;
     private RecyclerView rvNewsList;
     private NewsAdapter newsAdapter;
-    private List<News> newsData;
+    private List<Articles> articlesData;
     private SwipeRefreshLayout swipe;
 
     @Override
@@ -90,7 +91,7 @@ public class FriendActivity extends AppCompatActivity {
         ivFriendOut.setOnClickListener(view -> finish());
 
         // 与 NewsFragment 同逻辑部分
-        rvNewsList = findViewById(R.id.lv_news_list);
+        rvNewsList = findViewById(R.id.lv_article_list);
 
         initData();
         swipe = findViewById(R.id.swipe);
@@ -112,11 +113,11 @@ public class FriendActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Gson gson = new Gson();
-                        Type jsonType = new TypeToken<BaseResponse<List<News>>>() {
+                        Type jsonType = new TypeToken<BaseResponse<List<Articles>>>() {
                         }.getType();
-                        BaseResponse<List<News>> newsListResponse = gson.fromJson(body, jsonType);
-                        for (News news : newsListResponse.getData()) {
-                            newsAdapter.add(news);
+                        BaseResponse<List<Articles>> newsListResponse = gson.fromJson(body, jsonType);
+                        for (Articles articles : newsListResponse.getData()) {
+                            newsAdapter.add(articles);
                         }
                         newsAdapter.notifyDataSetChanged();
                         swipe.setRefreshing(false);
@@ -134,18 +135,18 @@ public class FriendActivity extends AppCompatActivity {
     };
 
     private void initData() {
-        newsData = new ArrayList<>();
-        newsAdapter = new NewsAdapter(this, R.layout.list_item, newsData);
+        articlesData = new ArrayList<>();
+        newsAdapter = new NewsAdapter(this, R.layout.list_item, articlesData);
         newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
                 OperationDialogFragment operationDialogFragment = new OperationDialogFragment();
-                operationDialogFragment.articleUrl = newsData.get(position).getArticle();
+                operationDialogFragment.articleUrl = articlesData.get(position).getArticle();
                 operationDialogFragment.itemIndex = position;
                 operationDialogFragment.setOnNotLikeClickListener(new OperationDialogFragment.OnNotLikeClickListener() {
                     @Override
                     public void onClick(int position) {
-                        newsData.remove(position);
+                        articlesData.remove(position);
                         newsAdapter.notifyDataSetChanged();
                     }
                 });
@@ -154,12 +155,12 @@ public class FriendActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(FriendActivity.this, NewsContentActivity.class);
-                intent.putExtra(Constants.ARTICLE_URL_KEY, newsData.get(position).getArticle());
-                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, newsData.get(position).getAuthorId());
-                intent.putExtra(Constants.ARTICLE_NAME_KEY, newsData.get(position).getTitle());
-                intent.putExtra(Constants.AUTHOR_NAME_KEY, newsData.get(position).getUser_name());
-                intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, newsData.get(position).getUser_account());
-                intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, newsData.get(position).getAuthorHeadUrl());
+                intent.putExtra(Constants.ARTICLE_URL_KEY, articlesData.get(position).getArticle());
+                intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, articlesData.get(position).getAuthorId());
+                intent.putExtra(Constants.ARTICLE_NAME_KEY, articlesData.get(position).getTitle());
+                intent.putExtra(Constants.AUTHOR_NAME_KEY, articlesData.get(position).getUser_name());
+                intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, articlesData.get(position).getUser_account());
+                intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, articlesData.get(position).getAuthorHeadUrl());
                 intent.putExtra("testUserKey", 1005);
                 startActivity(intent);
             }
@@ -176,7 +177,7 @@ public class FriendActivity extends AppCompatActivity {
                     .url(Constants.USER_ARTICLE_URL + "?userAccount=" + userAccount)
                     .get().build();
             try {
-                newsData.clear();
+                articlesData.clear();
                 newsAdapter.notifyDataSetChanged();
                 OkHttpClient client = new OkHttpClient();
                 client.newCall(request).enqueue(callback);

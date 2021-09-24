@@ -3,7 +3,6 @@ package com.example.newslist.news;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
@@ -49,7 +48,7 @@ public class NewsContentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_content);
+        setContentView(R.layout.activity_article_content);
 
         ImageView ivNewContentBack = findViewById(R.id.iv_new_content_back);
         btnFollow = findViewById(R.id.btn_follow);

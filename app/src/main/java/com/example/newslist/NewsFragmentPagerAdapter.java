@@ -12,7 +12,7 @@ import java.util.List;
 
 public class NewsFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private String[] mTitles = new String[]{"综合新闻", "互联网资讯", "今日头条"};
+    private String[] mTitles = new String[]{"文章", "消息", "创作", "我的"};
     List<Fragment> fragments = new ArrayList<>();
 
     public NewsFragmentPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
