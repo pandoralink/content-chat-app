@@ -44,6 +44,7 @@ public class ArticleContentActivity extends AppCompatActivity {
     private int articleID;
     ImageView ivAuthorHead;
     Button btnFollow;
+    OkHttpClient okHttpClient = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,63 +168,55 @@ public class ArticleContentActivity extends AppCompatActivity {
         });
         /* 设置WebView属性,运行执行js脚本 */
         webView.getSettings().setJavaScriptEnabled(true);
-        String a = "3";
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.loadUrl(articleUrl);
     }
 
     private void follow() {
-        new Thread(() -> {
-            // 不想继续再 Constant 里面定义 Key
-            String url = Constants.BACK_BASE_URL + "addFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
-            OkHttpClient okHttpClient = new OkHttpClient();
-            final Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Call call = okHttpClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.d(TAG, "onFailure: ");
-                }
+        String url = Constants.BACK_BASE_URL + "addFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
+        final Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: ");
+            }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        runOnUiThread(() -> {
-                            userRelate = true;
-                            btnFollow.setText("√已关注");
-                        });
-                    }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        userRelate = true;
+                        btnFollow.setText("√已关注");
+                    });
                 }
-            });
-        }).start();
+            }
+        });
     }
 
     private void cancelFollow() {
-        new Thread(() -> {
-            String url = Constants.BACK_BASE_URL + "cancelFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
-            OkHttpClient okHttpClient = new OkHttpClient();
-            final Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Call call = okHttpClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.d(TAG, "onFailure: ");
-                }
+        String url = Constants.BACK_BASE_URL + "cancelFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
+        final Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: ");
+            }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        runOnUiThread(() -> {
-                            userRelate = false;
-                            btnFollow.setText("+关注");
-                        });
-                    }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        userRelate = false;
+                        btnFollow.setText("+关注");
+                    });
                 }
-            });
-        }).start();
+            }
+        });
     }
 }

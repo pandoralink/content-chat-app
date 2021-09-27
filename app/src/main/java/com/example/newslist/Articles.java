@@ -70,6 +70,9 @@ public class Articles {
 
     private String article_cover_url;
     private String user_account;
+    /**
+     * 作者名称
+     */
     private String user_name;
     @SerializedName("new_id")
     private Integer aId;
