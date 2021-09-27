@@ -100,17 +100,19 @@ alter table new drop column new_comment_area_id;
 ### 存储过程 proc_newByInsert
 
 ```sql
-CREATE PROCEDURE proc_newByInsert (
+CREATE DEFINER=`poplink`@`%` PROCEDURE `proc_newByInsert`(
   in new_owner_id int,
-  in new_owner_head_url varchar(100),
+  in article_cover_url varchar(100),
   in new_name varchar(100)
 )
 BEGIN
   declare newUrl varchar(100);
   select concat("http://116.63.152.202:5002/News/",max(new_id),".html") into newUrl from new;
-  INSERT INTO new(new_url,new_owner_id,new_owner_head_url,new_name) VALUES (newUrl,new_owner_id,new_owner_head_url,new_name);
-END;
+  INSERT INTO new(new_url,new_owner_id,new_name,article_cover_url) VALUES (newUrl,new_owner_id,new_name,article_cover_url);
+END
 ```
+
+测试输入 `call proc_newByInsert(1005,"testUrl","标题测试");`
 
 1. 会直接拿 new 表中的最大值作为 new_url 的值，因为该值最后会返回给后端进行一个 HTML 文件命名
 2. 如果有多个请求同时拿到最大值也只会有一个能够插入成功，因为 new_url 将会是唯一的

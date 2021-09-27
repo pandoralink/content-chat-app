@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.newslist.Articles;
-import com.example.newslist.News;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
 import com.example.newslist.data.BaseResponse;
@@ -37,24 +36,25 @@ import okhttp3.Response;
 /**
  * @author 庞旺
  */
-public class ArticleContentFragment extends Fragment {
+public class ArticleListFragment extends Fragment {
 
     private static final String TAG = "PW";
     View rootView;
     private RecyclerView rvNewsList;
     private NewsAdapter newsAdapter;
     private List<Articles> articlesData;
+    private OkHttpClient okHttpClient;
     private SwipeRefreshLayout swipe;
     private String[] titles = null;
     private String[] authors = null;
     private String CURRENT_URL;
     private String a = "1";
 
-    public ArticleContentFragment() {
+    public ArticleListFragment() {
         CURRENT_URL = Constants.ARTICLE_URL;
     }
 
-    public ArticleContentFragment(String currentUrl) {
+    public ArticleListFragment(String currentUrl) {
         CURRENT_URL = currentUrl;
     }
 
@@ -66,6 +66,7 @@ public class ArticleContentFragment extends Fragment {
         }
 
         rvNewsList = rootView.findViewById(R.id.lv_article_list);
+        okHttpClient = new OkHttpClient();
 
         initData();
         swipe = rootView.findViewById(R.id.swipe);
@@ -108,8 +109,7 @@ public class ArticleContentFragment extends Fragment {
 
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-                // 一条条 put 太麻烦了
+                Intent intent = new Intent(getActivity(), ArticleContentActivity.class);
                 intent.putExtra(Constants.ARTICLE_URL_KEY, articlesData.get(position).getArticle());
                 intent.putExtra("NewIDKey", articlesData.get(position).getaId());
                 intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, articlesData.get(position).getAuthorId());
@@ -140,8 +140,8 @@ public class ArticleContentFragment extends Fragment {
                         Type jsonType = new TypeToken<BaseResponse<List<Articles>>>() {
                         }.getType();
                         BaseResponse<List<Articles>> newsListResponse = gson.fromJson(body, jsonType);
-                        for (Articles articles : newsListResponse.getData()) {
-                            newsAdapter.add(articles);
+                        for (Articles article : newsListResponse.getData()) {
+                            newsAdapter.add(article);
                         }
                         newsAdapter.notifyDataSetChanged();
                         swipe.setRefreshing(false);

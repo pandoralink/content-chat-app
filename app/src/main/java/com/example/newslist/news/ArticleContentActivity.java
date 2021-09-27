@@ -31,7 +31,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class NewsContentActivity extends AppCompatActivity {
+public class ArticleContentActivity extends AppCompatActivity {
 
     private final String TAG = "PW";
     private String articleUrl;
@@ -132,7 +132,7 @@ public class NewsContentActivity extends AppCompatActivity {
         authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
         tvNewName.setText(intent.getStringExtra(Constants.ARTICLE_NAME_KEY));
         tvAuthorName.setText(authorName);
-        Glide.with(NewsContentActivity.this).load(authorHeadUrl).into(ivAuthorHead);
+        Glide.with(ArticleContentActivity.this).load(authorHeadUrl).into(ivAuthorHead);
 
         if (authorId == 0 || userId == 0) {
         } else {

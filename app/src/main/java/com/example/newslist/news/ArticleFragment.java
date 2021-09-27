@@ -44,8 +44,8 @@ public class ArticleFragment extends Fragment {
             tabLayout = rootView.findViewById(R.id.tl_tabs);
             vpArticleContent = rootView.findViewById(R.id.vp_article_content);
             List<Fragment> articleFragment = new ArrayList<>();
-            articleFragment.add(new ArticleContentFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=1005"));
-            articleFragment.add(new ArticleContentFragment());
+            articleFragment.add(new ArticleListFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=1005"));
+            articleFragment.add(new ArticleListFragment());
             vpArticleContent.setAdapter(new ArticleFragmentPagerAdapter(getChildFragmentManager(), articleFragment));
             vpArticleContent.setOffscreenPageLimit(1);
             vpArticleContent.setCurrentItem(1);

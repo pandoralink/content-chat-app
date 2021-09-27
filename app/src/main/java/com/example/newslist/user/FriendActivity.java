@@ -16,13 +16,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newslist.Articles;
-import com.example.newslist.News;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.message.MsgContentActivity;
-import com.example.newslist.news.NewsContentActivity;
+import com.example.newslist.news.ArticleContentActivity;
 import com.example.newslist.popup.OperationDialogFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -154,7 +153,7 @@ public class FriendActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(FriendActivity.this, NewsContentActivity.class);
+                Intent intent = new Intent(FriendActivity.this, ArticleContentActivity.class);
                 intent.putExtra(Constants.ARTICLE_URL_KEY, articlesData.get(position).getArticle());
                 intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, articlesData.get(position).getAuthorId());
                 intent.putExtra(Constants.ARTICLE_NAME_KEY, articlesData.get(position).getTitle());
