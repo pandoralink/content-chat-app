@@ -171,18 +171,16 @@ public class FriendActivity extends AppCompatActivity {
     }
 
     private void refreshData() {
-        new Thread(() -> {
-            Request request = new Request.Builder()
-                    .url(Constants.USER_ARTICLE_URL + "?userAccount=" + userAccount)
-                    .get().build();
-            try {
-                articlesData.clear();
-                newsAdapter.notifyDataSetChanged();
-                OkHttpClient client = new OkHttpClient();
-                client.newCall(request).enqueue(callback);
-            } catch (NetworkOnMainThreadException ex) {
-                ex.printStackTrace();
-            }
-        }).start();
+        Request request = new Request.Builder()
+                .url(Constants.USER_ARTICLE_URL + "?userAccount=" + userAccount)
+                .get().build();
+        try {
+            articlesData.clear();
+            newsAdapter.notifyDataSetChanged();
+            OkHttpClient client = new OkHttpClient();
+            client.newCall(request).enqueue(callback);
+        } catch (NetworkOnMainThreadException ex) {
+            ex.printStackTrace();
+        }
     }
 }

@@ -3,6 +3,10 @@ package com.example.newslist.news;
 import com.google.gson.annotations.SerializedName;
 
 public class AuthorInfoRequest {
+    private int fanTotal;
+    @SerializedName("relate")
+    private Boolean authorRelate;
+
     public int getFanTotal() {
         return fanTotal;
     }
@@ -10,10 +14,6 @@ public class AuthorInfoRequest {
     public void setFanTotal(int fanTotal) {
         this.fanTotal = fanTotal;
     }
-
-    private int fanTotal;
-    @SerializedName("relate")
-    private Boolean authorRelate;
 
     public Boolean getAuthorRelate() {
         return authorRelate;

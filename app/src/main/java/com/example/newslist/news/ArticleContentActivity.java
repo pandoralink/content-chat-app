@@ -137,17 +137,15 @@ public class ArticleContentActivity extends AppCompatActivity {
 
         if (authorId == 0 || userId == 0) {
         } else {
-            new Thread(() -> {
-                Request request = new Request.Builder()
-                        .url(Constants.ARTICLE_AUTHOR_INFO_BASE_URL + "?blogger_id=" + authorId + "&fan_id=" + userId)
-                        .get().build();
-                try {
-                    OkHttpClient client = new OkHttpClient();
-                    client.newCall(request).enqueue(callback);
-                } catch (NetworkOnMainThreadException ex) {
-                    ex.printStackTrace();
-                }
-            }).start();
+            Request request = new Request.Builder()
+                    .url(Constants.ARTICLE_AUTHOR_INFO_BASE_URL + "?blogger_id=" + authorId + "&fan_id=" + userId)
+                    .get().build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                client.newCall(request).enqueue(callback);
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
