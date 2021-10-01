@@ -68,7 +68,7 @@ public class Articles {
         this.authorHeadUrl = authorHeadUrl;
     }
 
-    private String article_cover_url;
+    private String article_cover_url = "";
     private String user_account;
     /**
      * 作者名称

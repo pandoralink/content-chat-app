@@ -1,15 +1,19 @@
 package com.example.newslist;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -44,6 +48,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
+
     public NewsAdapter(Context context, int resourceId, List<Articles> data) {
         this.mContext = context;
         this.mArticlesData = data;
@@ -59,8 +64,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        /**
+         * onBindViewHolder 作
+         * 初始化，防止出现复用 Bug
+         */
         Articles articles = mArticlesData.get(position);
         holder.tvTitle.setText(articles.getTitle());
+        holder.ivImage.setVisibility(View.VISIBLE);
+
         if (articles.getUser_name() != null) {
             holder.tvAuthor.setText(articles.getUser_name());
         }

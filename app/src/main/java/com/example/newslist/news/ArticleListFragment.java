@@ -48,7 +48,13 @@ public class ArticleListFragment extends Fragment {
     private String[] titles = null;
     private String[] authors = null;
     private String CURRENT_URL;
-    private String a = "1";
+    private int offset = 0;
+    /**
+     * JUDGE_REGEX 判断是否是
+     * 带 ? 的 URL
+     * ? 好像不能转义？
+     */
+    private String JUDGE_REGEX = "[?]";
 
     public ArticleListFragment() {
         CURRENT_URL = Constants.ARTICLE_URL;
@@ -68,7 +74,6 @@ public class ArticleListFragment extends Fragment {
         rvNewsList = rootView.findViewById(R.id.lv_article_list);
         okHttpClient = new OkHttpClient();
 
-        initData();
         swipe = rootView.findViewById(R.id.swipe);
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -76,6 +81,9 @@ public class ArticleListFragment extends Fragment {
                 refreshData();
             }
         });
+
+        initData();
+
         return rootView;
     }
 
@@ -144,6 +152,7 @@ public class ArticleListFragment extends Fragment {
                             newsAdapter.add(article);
                         }
                         newsAdapter.notifyDataSetChanged();
+                        offset += 10;
                         swipe.setRefreshing(false);
                     }
                 });
@@ -159,20 +168,20 @@ public class ArticleListFragment extends Fragment {
     };
 
     private void refreshData() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Request request = new Request.Builder()
-                        .url(CURRENT_URL)
-                        .get().build();
-                try {
-                    OkHttpClient client = new OkHttpClient();
-                    client.newCall(request).enqueue(callback);
-                } catch (NetworkOnMainThreadException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }).start();
+        swipe.setRefreshing(true);
+        if(!CURRENT_URL.matches(JUDGE_REGEX)) {
+            CURRENT_URL = CURRENT_URL + "?";
+        }
+        Request request = new Request.Builder()
+                .url(CURRENT_URL + "&offset=" + offset)
+                .get().build();
+        try {
+            Log.d(TAG, "refreshData: " + request);
+            OkHttpClient client = new OkHttpClient();
+            client.newCall(request).enqueue(callback);
+        } catch (NetworkOnMainThreadException ex) {
+            ex.printStackTrace();
+        }
     }
 }
 
