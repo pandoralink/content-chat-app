@@ -23,77 +23,11 @@
             android:textSize="20sp" />
     </RelativeLayout>
 
-    <RadioGroup
-        android:id="@+id/rg_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rl_nav_bar"
-        android:background="@drawable/nav_bar_border"
-        android:divider="@drawable/spacer_medium"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        android:showDividers="middle">
-
-        <RadioButton
-            android:id="@+id/rb_news"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/circle_operation_item"
-            android:button="@null"
-            android:drawableTop="@drawable/ic_comment_64"
-            android:gravity="center"
-            android:paddingTop="4dp"
-            android:text="回复"
-            android:textColor="@drawable/radio_button_text_color"
-            android:textSize="20sp" />
-
-        <RadioButton
-            android:id="@+id/rb_not_like"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/circle_operation_item"
-            android:button="@null"
-            android:gravity="center"
-            android:paddingTop="4dp"
-            android:textColor="@drawable/radio_button_text_color"
-            android:textSize="20sp"
-            android:visibility="invisible" />
-
-        <RadioButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/circle_operation_item"
-            android:button="@null"
-            android:drawableTop="@drawable/ic_not_like_64"
-            android:gravity="center"
-            android:text="消息"
-            android:textColor="@drawable/radio_button_text_color"
-            android:textSize="20sp"
-            android:visibility="invisible" />
-
-        <RadioButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/circle_operation_item"
-            android:button="@null"
-            android:drawableTop="@drawable/ic_not_like_64"
-            android:gravity="center"
-            android:text="消息"
-            android:textColor="@drawable/radio_button_text_color"
-            android:textSize="20sp"
-            android:visibility="invisible" />
-
-    </RadioGroup>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rg_bar">
+        android:layout_below="@id/rl_nav_bar">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_msg_list"

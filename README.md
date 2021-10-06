@@ -416,7 +416,7 @@ webView.getSettings().setJavaScriptEnabled(true);
 
 9/24 号
 
-写报告，预计26号写完报告，不能再拖，19 号就写完我的模块的代码了，写了4、5天报告还没能写完！
+写报告，预计 26 号写完报告，不能再拖，19 号就写完我的模块的代码了，写了 4、5 天报告还没能写完！
 
 实在不行就执行 B 方案
 
@@ -426,6 +426,22 @@ webView.getSettings().setJavaScriptEnabled(true);
 
 1. 由于文章数量变多，需要对每次传递文章数据数量作出限制
 2. 通知/提醒 需要点击后需要进行跳转页面
+
+10/4
+
+1. 创作模块
+   1. 增加文章 `2021年10月4日16点05分`
+   2. 更新文章
+   3. 删除文章
+2. 完成创作模块的报告
+3. 完成后端以及数据库的报告
+4. 完成 IM 以及登录模块的报告
+
+10/5
+
+1. 创作模块
+   1. 是否需要加入更新和创建提示？（error/success）
+   2. 是否需要对编辑内容进行一定的校验
 
 ## 移动端访问 PC 端开发页面
 
@@ -510,3 +526,7 @@ android 虚拟机一直访问失败，连接 websocket 直接跳转到 onFailure
 切换一下 apk 文件的输出路径！
 
 [No key with alias '**_' found in keystore _** 解决方法](https://blog.csdn.net/jack22001/article/details/85319308)
+
+java.lang.IllegalArgumentException: Code must be in range [1000,5000): 0
+
+okhttp websocket 连接主动关闭时报错（[1000,5000)是什么意思？）

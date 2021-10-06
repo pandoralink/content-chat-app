@@ -22,7 +22,6 @@ public class NewsFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Log.d("PW", "getItem: " + position);
         return fragments.get(position);
     }
 

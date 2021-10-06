@@ -27,4 +27,10 @@
     <style name="TabLayoutTextStyle">
         <item name="android:textSize">@dimen/tl_textSize</item>
     </style>
+
+    <!-- 选择框 -->
+    <style name="CheckBoxTheme">
+        <item name="colorAccent">@color/selectState</item><!--选中颜色-->
+        <item name="colorControlNormal">@color/defaultTextColor</item><!--未选中颜色-->
+    </style>
 </resources>

@@ -169,7 +169,7 @@ public class ArticleListFragment extends Fragment {
 
     private void refreshData() {
         swipe.setRefreshing(true);
-        if(!CURRENT_URL.matches(JUDGE_REGEX)) {
+        if (!CURRENT_URL.matches(JUDGE_REGEX)) {
             CURRENT_URL = CURRENT_URL + "?";
         }
         Request request = new Request.Builder()

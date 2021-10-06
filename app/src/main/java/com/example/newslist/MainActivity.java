@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -25,11 +26,14 @@ import com.example.newslist.data.MsgTip;
 import com.example.newslist.message.Messages;
 import com.example.newslist.message.MsgFragment;
 import com.example.newslist.news.ArticleFragment;
+import com.example.newslist.utils.UserInfo;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private static int defaultPage = 0;
     Gson gson = new Gson();
     MsgFragment msgFragment;
+    public static WebSocket mWebSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +85,12 @@ public class MainActivity extends AppCompatActivity {
         fragments.add(new UserFragment());
 
         mViewPager.setAdapter(new NewsFragmentPagerAdapter(getSupportFragmentManager(), fragments));
-        mViewPager.setOffscreenPageLimit(2);
+        /**
+         * setOffscreenPageLimit()
+         * 会导致 ViewPager 中所有
+         * 页面都加载完才显示第一个页面
+         */
+        mViewPager.setOffscreenPageLimit(4);
 
         mViewPager.addOnPageChangeListener(mPageChangeListener);
         rgTabBar.setOnCheckedChangeListener(mOnCheckedChangeListener);
@@ -123,27 +133,30 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private WebSocket mWebSocket;
-
-
     private WebSocketListener webSocketListener = new WebSocketListener() {
         @Override
         public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
             super.onOpen(webSocket, response);
             Log.e(TAG, "连接成功");
             // 发送 uid，暂时用 1005 代替
-            webSocket.send(Integer.toString(1005));
+//            webSocket.send(Integer.toString(1005));
         }
 
         @Override
         public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
             super.onMessage(webSocket, text);
-            Log.e(TAG, "连接成功" + text);
+            Log.d(TAG, "来消息了");
             Messages message = new Messages();
             message.setFriendName("defaultName");
             message.setFirstMsg(text);
-            MsgTip msgTip = gson.fromJson(text, MsgTip.class);
-            sendNotification(msgTip.getContent(), msgTip.getName(), msgTip.getHeadUrl(), msgTip.getContentUrl());
+            Type type = new TypeToken<List<MsgTip>>() {
+            }.getType();
+            List<MsgTip> msgTipList = gson.fromJson(text, type);
+            runOnUiThread(() -> {
+                for (MsgTip msgTip : msgTipList) {
+                    sendNotification(msgTip.getContent(), msgTip.getName(), msgTip.getHeadUrl(), msgTip.getContentUrl());
+                }
+            });
         }
 
         @Override
@@ -161,12 +174,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
             super.onFailure(webSocket, t, response);
+            Log.d(TAG, "onFailure: " + t);
             Log.e(TAG, "连接失败");
+            runOnUiThread(() -> Toast.makeText(MainActivity.this, "连接失败，请重启APP", Toast.LENGTH_SHORT).show());
         }
     };
 
     private void initWebSocket() {
-        String wsUrl = Constants.LOCAL_WEBSOCKET_URL;
+        String wsUrl = Constants.REMOTE_WEBSOCKET_URL + "/?id=1005";
         //构造request对象
         Request request = new Request.Builder()
                 .url(wsUrl)
@@ -175,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient.Builder()
                     .pingInterval(10, TimeUnit.SECONDS)
                     .build();
-            client.newWebSocket(request, webSocketListener);
+            mWebSocket= client.newWebSocket(request, webSocketListener);
         } catch (NetworkOnMainThreadException ex) {
             ex.printStackTrace();
         }
@@ -200,9 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 .setContentIntent(pendingIntent)
                 .setPriority(2)
                 .build();
-//        notification.flags = Notification.FLAG_ONGOING_EVENT;
         NotificationManager notifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        startForeground(ONGOING_NOTIFICATION_ID, notification);
         String CHANNEL_NAME = "your_custom_name";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -210,7 +223,8 @@ public class MainActivity extends AppCompatActivity {
                     CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
             notifyManager.createNotificationChannel(notificationChannel);
         }
-        notifyManager.notify(1, notification);//id要保证唯一
+        //id要保证唯一
+        notifyManager.notify(1, notification);
         Messages messages = new Messages();
         messages.setFriendName(name + "回复了你");
         messages.setFirstMsg(content);
