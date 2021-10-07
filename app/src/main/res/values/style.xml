@@ -3,7 +3,7 @@
 
     <style name="roundedCornerImageStyle">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">25dp</item>
+        <item name="cornerSize">40dp</item>
     </style>
 
     <style name="operationDialogFragment" parent="@android:style/Theme.Dialog">

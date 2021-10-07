@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:src="@drawable/good" />
+                android:src="@drawable/ic_good_filling_24" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:src="@drawable/operation_follow_icon" />
+                android:src="@drawable/ic_follow_24" />
 
             <TextView
                 android:layout_width="wrap_content"
