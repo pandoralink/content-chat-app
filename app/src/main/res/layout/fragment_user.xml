@@ -30,20 +30,21 @@
             app:shapeAppearanceOverlay="@style/roundedCornerImageStyle" />
 
         <TextView
-            android:id="@+id/tv_title"
+            android:id="@+id/tv_user_name"
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/iv_author_head"
-            android:layout_alignParentRight="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/defaultTextColor"
             android:layout_toRightOf="@id/iv_author_head"
             android:text="账号名称"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/tv_subtitle"
+            android:id="@+id/tv_user_account"
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,17 +57,23 @@
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="12sp" />
 
+        <RelativeLayout
+            android:id="@+id/rl_user_manager_in"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true">
 
-        <ImageView
-            android:id="@+id/user_manager_in"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="8dp"
-            android:clickable="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_in_24" />
+            <ImageView
+                android:id="@+id/user_manager_in"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_in_24" />
+        </RelativeLayout>
 
         <View
             android:layout_width="wrap_content"
@@ -86,8 +93,8 @@
         app:layout_constraintTop_toBottomOf="@id/user_manager">
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/good_manager"
+            android:layout_width="match_parent"
             android:layout_height="64dp">
 
             <ImageView
@@ -128,10 +135,10 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_below="@id/good_manager"
             android:id="@+id/follow_manager"
-            android:layout_height="64dp">
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_below="@id/good_manager">
 
             <ImageView
                 android:id="@+id/operation_follow_icon"
@@ -169,17 +176,17 @@
                 android:layout_alignParentBottom="true"
                 android:background="@android:color/transparent" />
         </RelativeLayout>
+
         <com.google.android.material.button.MaterialButton
-            android:layout_below="@id/follow_manager"
             android:id="@+id/btn_user_out"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/follow_manager"
             android:layout_centerInParent="true"
             android:backgroundTint="@color/selectState"
-            android:text="退出账号"
             android:padding="10dp"
+            android:text="退出账号"
             android:textSize="20sp"
-            app:cornerRadius="15dp"
-            />
+            app:cornerRadius="15dp" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

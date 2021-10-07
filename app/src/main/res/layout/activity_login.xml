@@ -39,7 +39,7 @@
             android:src="@drawable/ic_account_on_32" />
 
         <EditText
-            android:id="@+id/account"
+            android:id="@+id/et_user_info_name"
             android:layout_width="301dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

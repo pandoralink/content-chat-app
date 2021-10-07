@@ -22,7 +22,7 @@
             android:layout_toLeftOf="@id/iv_author_head">
 
             <TextView
-                android:id="@+id/tv_title"
+                android:id="@+id/tv_user_name"
                 style="@style/TextAppearance.AppCompat.Subhead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,11 +37,11 @@
                 tool:text="测试标题" />
 
             <TextView
-                android:id="@+id/tv_subtitle"
+                android:id="@+id/tv_user_account"
                 style="@style/TextAppearance.AppCompat.Subhead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tv_title"
+                android:layout_below="@id/tv_user_name"
                 android:layout_alignParentBottom="true"
                 android:paddingStart="8dp"
                 android:paddingLeft="8dp"

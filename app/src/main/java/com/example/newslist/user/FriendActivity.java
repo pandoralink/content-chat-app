@@ -53,7 +53,7 @@ public class FriendActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         ImageView iv_author_head = findViewById(R.id.iv_author_head);
-        TextView tvAuthorName = findViewById(R.id.tv_title);
+        TextView tvAuthorName = findViewById(R.id.tv_user_name);
         Button btnFollow = findViewById(R.id.btn_follow_user);
         TextView tvAccount = findViewById(R.id.tv_account);
         TextView tvFanNum = findViewById(R.id.tv_fan_num);
