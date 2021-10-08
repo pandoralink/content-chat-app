@@ -23,10 +23,12 @@ public class UserFragment extends Fragment {
     String spFileName;
     String accountKey;
     String passwordKey;
+    private String userIdKey;
     String userNameKey;
     String userHeadKey;
     String name;
     String password;
+    private Integer userId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +52,7 @@ public class UserFragment extends Fragment {
             Intent intent = new Intent(getContext(), UserInfoActivity.class);
             intent.putExtra("name", name);
             intent.putExtra("password", password);
+            intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
@@ -83,12 +86,14 @@ public class UserFragment extends Fragment {
         passwordKey = getResources().getString(R.string.login_password);
         userNameKey = getResources().getString(R.string.userName);
         userHeadKey = getResources().getString(R.string.userHead);
+        userIdKey = getResources().getString(R.string.userId);
         TextView tvUserName = rootView.findViewById(R.id.tv_user_name);
         TextView tvUserAccount = rootView.findViewById(R.id.tv_user_account);
         Context context = getContext();
 
         name = getStringValue(context, spFileName, userNameKey);
         password = getStringValue(context, spFileName, passwordKey);
+        userId = getIntegerValue(context, spFileName, userIdKey);
 
         tvUserName.setText(name);
         tvUserAccount.setText(getStringValue(context, spFileName, accountKey));
@@ -96,5 +101,9 @@ public class UserFragment extends Fragment {
 
     private String getStringValue(Context context, String fileName, String key) {
         return context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getString(key, null);
+    }
+
+    private Integer getIntegerValue(Context context, String fileName, String key) {
+        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getInt(key, 0);
     }
 }

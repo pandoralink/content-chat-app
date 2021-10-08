@@ -13,6 +13,7 @@ public final class Constants {
     public static final String ARTICLE_URL = BACK_BASE_URL + "new";
     public static final String FOLLOW_AUTHOR_ARTICLE_URL = BACK_BASE_URL + "fan";
     public static final String ARTICLE_AUTHOR_INFO_BASE_URL = BACK_BASE_URL + "authorInfo";
+    public static final String ARTICLE_AUTHOR_INFO_UPDATE_BASE_URL = "http://116.63.152.202:8084/updateRole";
     public static final String USER_ARTICLE_URL = BACK_BASE_URL + "userArticle";
     public static String ARTICLE_URL_KEY = "article_url_key";
     public static String ARTICLE_AUTHOR_INFO_KEY = "article_author_info_key";

@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,15 +20,33 @@ import android.widget.Toast;
 import com.example.newslist.LoginActivity;
 import com.example.newslist.MainActivity;
 import com.example.newslist.R;
+import com.example.newslist.data.BaseResponse;
+import com.example.newslist.data.Constants;
+import com.example.newslist.news.AuthorInfoRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class UserInfoActivity extends AppCompatActivity {
-    private EditText etPwd;
+    private EditText etUserInfoPwd;
     private EditText etUserInfoName;
     private Boolean bPwdSwitch = false;
     private String oldPassword;
     private String oldName;
     private Button btnModifyUserInfo;
     private Toast toast;
+    OkHttpClient okHttpClient;
+    private Integer userId;
+    private static final String SUCCESS = "success";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +54,11 @@ public class UserInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_info);
 
         ImageView ivInfoOut = findViewById(R.id.iv_info_out);
-        etPwd = findViewById(R.id.et_pwd);
+        etUserInfoPwd = findViewById(R.id.et_user_info_pwd);
         etUserInfoName = findViewById(R.id.et_user_info_name);
         btnModifyUserInfo = findViewById(R.id.btn_modify_user_info);
         toast = Toast.makeText(UserInfoActivity.this, null, Toast.LENGTH_SHORT);
+        okHttpClient = new OkHttpClient();
 
         ivInfoOut.setOnClickListener(view -> {
             finish();
@@ -50,20 +72,18 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void modifyUserInfo() {
-//        if(!etPwd.getText().equals(oldPassword)) {
-//
-//        }
-//        else {
-//            finish();
-//        }
-        toast.setText("身份认证过期，请重新登录");
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-        handleUserInfo();
-        Intent intent = new Intent();
-        intent.setClass(UserInfoActivity.this,
-                LoginActivity.class);
-        startActivity(intent);
+        ;
+        if (etUserInfoPwd.getText().toString().equals(oldPassword) && etUserInfoName.getText().toString().equals(oldName)) {
+            /**
+             * EditText.getText() 可能是不同编码字符串
+             * 需要再使用 toString() 与 old 进行比较
+             */
+            toast.setText("没有做出任何修改");
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        } else {
+            update();
+        }
     }
 
     public void changePw() {
@@ -73,15 +93,15 @@ public class UserInfoActivity extends AppCompatActivity {
             if (bPwdSwitch) {
                 ivPwdSwitch.setImageResource(
                         R.drawable.ic_eye_fill_24);
-                etPwd.setInputType(
+                etUserInfoPwd.setInputType(
                         InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             } else {
                 ivPwdSwitch.setImageResource(
                         R.drawable.ic_eye_slash_fill_32);
-                etPwd.setInputType(
+                etUserInfoPwd.setInputType(
                         InputType.TYPE_TEXT_VARIATION_PASSWORD |
                                 InputType.TYPE_CLASS_TEXT);
-                etPwd.setTypeface(Typeface.DEFAULT);
+                etUserInfoPwd.setTypeface(Typeface.DEFAULT);
             }
         });
     }
@@ -90,11 +110,12 @@ public class UserInfoActivity extends AppCompatActivity {
         Intent intent = getIntent();
         oldName = intent.getStringExtra("name");
         oldPassword = intent.getStringExtra("password");
+        userId = intent.getIntExtra("userId", 0);
     }
 
     private void initView() {
         etUserInfoName.setText(oldName);
-        etPwd.setText(oldPassword);
+        etUserInfoPwd.setText(oldPassword);
     }
 
     private void handleUserInfo() {
@@ -107,5 +128,49 @@ public class UserInfoActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = spFile.edit();
         editor.remove(userIdKey);
         editor.apply();
+    }
+
+    private void update() {
+        Request request = new Request.Builder()
+                .url(Constants.ARTICLE_AUTHOR_INFO_UPDATE_BASE_URL + "?user_id=" + userId
+                        + "&user_name=" + etUserInfoName.getText().toString()
+                        + "&user_password=" + etUserInfoPwd.getText().toString())
+                .get().build();
+        Log.d("PW", "update: " + request.url());
+        try {
+            OkHttpClient client = new OkHttpClient();
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response)
+                        throws IOException {
+                    if (response.isSuccessful()) {
+                        final String body = response.body().string();
+                        runOnUiThread(() -> {
+                            if (SUCCESS.equals(body)) {
+                                toast.setText("身份认证过期，请重新登录");
+                                toast.setGravity(Gravity.CENTER, 0, 0);
+                                toast.show();
+                                handleUserInfo();
+                                Intent intent = new Intent();
+                                intent.setClass(UserInfoActivity.this,
+                                        LoginActivity.class);
+                                startActivity(intent);
+                            } else {
+                                toast.setText("修改失败，请重新修改或者检查网络");
+                                toast.setGravity(Gravity.CENTER, 0, 0);
+                                toast.show();
+                            }
+                        });
+                    }
+                }
+            });
+        } catch (NetworkOnMainThreadException ex) {
+            ex.printStackTrace();
+        }
     }
 }

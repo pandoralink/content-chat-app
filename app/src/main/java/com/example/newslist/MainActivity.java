@@ -58,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
     private static int defaultPage = 0;
     Gson gson = new Gson();
     MsgFragment msgFragment;
+    /**
+     * 用 public static 关 ws 似乎有些 Bug
+     * 但我还没有遇见
+     */
     public static WebSocket mWebSocket;
 
     @Override
@@ -138,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
         public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
             super.onOpen(webSocket, response);
             Log.e(TAG, "连接成功");
-            // 发送 uid，暂时用 1005 代替
-//            webSocket.send(Integer.toString(1005));
         }
 
         @Override
@@ -174,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
             super.onFailure(webSocket, t, response);
+            // 出于服务器和网络状态等原因，必须多次重连
             Log.d(TAG, "onFailure: " + t);
             Log.e(TAG, "连接失败");
             runOnUiThread(() -> Toast.makeText(MainActivity.this, "连接失败，请重启APP", Toast.LENGTH_SHORT).show());
