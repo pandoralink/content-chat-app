@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Button btnLogin = findViewById(R.id.login);
         etPwd = findViewById(R.id.et_pwd);
-        etAccount = findViewById(R.id.et_user_info_name);
+        etAccount = findViewById(R.id.account);
         cbRememberPwd = findViewById(R.id.rememberPwd);
         toast = Toast.makeText(LoginActivity.this, null, Toast.LENGTH_SHORT);
         // 初始化 view
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                 bPwdSwitch = !bPwdSwitch;
                 if (bPwdSwitch) {
                     ivPwdSwitch.setImageResource(
-                            R.drawable.ic_eye_fill_24);
+                            R.drawable.eye_fill);
                     etPwd.setInputType(
                             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                 } else {

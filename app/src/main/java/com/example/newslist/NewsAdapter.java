@@ -1,15 +1,19 @@
 package com.example.newslist;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -107,8 +111,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         public ViewHolder(View view) {
             super(view);
 
-            tvTitle = view.findViewById(R.id.tv_user_name);
-            tvAuthor = view.findViewById(R.id.tv_user_account);
+            tvTitle = view.findViewById(R.id.tv_title);
+            tvAuthor = view.findViewById(R.id.tv_subtitle);
             ivImage = view.findViewById(R.id.iv_author_head);
         }
     }
