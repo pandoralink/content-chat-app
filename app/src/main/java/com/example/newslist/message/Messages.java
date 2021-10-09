@@ -72,4 +72,14 @@ public class Messages {
      * 默认为 ""
      */
     private String contentUrl = "";
+
+    private ArticleRequest articleRequest = null;
+
+    public ArticleRequest getArticleRequest() {
+        return articleRequest;
+    }
+
+    public void setArticleRequest(ArticleRequest articleRequest) {
+        this.articleRequest = articleRequest;
+    }
 }

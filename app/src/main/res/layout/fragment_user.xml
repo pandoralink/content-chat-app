@@ -27,7 +27,7 @@
             android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
             android:src="@drawable/default_head"
-            app:shapeAppearanceOverlay="@style/roundedCornerImageStyle" />
+            app:shapeAppearanceOverlay="@style/roundedCornerUserHeadImageStyle" />
 
         <TextView
             android:id="@+id/tv_user_name"
@@ -36,11 +36,11 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/iv_author_head"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:textColor="@color/defaultTextColor"
+            android:layout_marginRight="8dp"
             android:layout_toRightOf="@id/iv_author_head"
             android:text="账号名称"
+            android:textColor="@color/defaultTextColor"
             android:textSize="16sp" />
 
         <TextView

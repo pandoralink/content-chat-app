@@ -53,7 +53,7 @@ public class OperationDialogFragment extends BottomSheetDialogFragment {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_operation_dialog, container, false);
         }
-        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300));
+        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400));
 
         RadioButton rbNews = rootView.findViewById(R.id.rb_news);
         RadioButton rbNotLike = rootView.findViewById(R.id.rb_not_like);

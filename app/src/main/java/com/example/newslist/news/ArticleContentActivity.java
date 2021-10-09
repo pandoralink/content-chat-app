@@ -2,6 +2,7 @@ package com.example.newslist.news;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
@@ -41,10 +42,24 @@ public class ArticleContentActivity extends AppCompatActivity {
     private Boolean userRelate = false;
     private int authorId;
     private int userId;
+    private String userName;
+    private String userHeadUrl;
     private int articleID;
     ImageView ivAuthorHead;
     Button btnFollow;
     OkHttpClient okHttpClient = new OkHttpClient();
+    private Integer type = 1;
+
+    /**
+     * type: 1 || 2
+     * 1: 默认值，自带数据
+     * 2: 需要通过 id 请求作者信息
+     *
+     * @param type
+     */
+    public ArticleContentActivity(Integer type) {
+        this.type = type;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +68,15 @@ public class ArticleContentActivity extends AppCompatActivity {
 
         ImageView ivNewContentBack = findViewById(R.id.iv_new_content_back);
         btnFollow = findViewById(R.id.btn_follow);
+        String spFileName = getResources().getString(R.string.shared_preferences_file_name);
+        String userIdKey = getResources().getString(R.string.userId);
+        String userNameKey = getResources().getString(R.string.userName);
+        String userHeadKey = getResources().getString(R.string.userHead);
+
+        userId = getIntegerValue(ArticleContentActivity.this, spFileName, userIdKey);
+        userName = getStringValue(ArticleContentActivity.this, spFileName, userNameKey);
+        userHeadUrl = getStringValue(ArticleContentActivity.this, spFileName, userHeadKey);
+
         ivNewContentBack.setOnClickListener(view -> finish());
         btnFollow.setOnClickListener(view -> {
             if (userRelate) {
@@ -114,19 +138,12 @@ public class ArticleContentActivity extends AppCompatActivity {
     private void initData() {
         Intent intent = getIntent();
         articleID = intent.getIntExtra("NewIDKey", 0);
-        Log.d(TAG, "文章ID：" + articleID);
         authorId = intent.getIntExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, 0);
-        userId = intent.getIntExtra("testUserKey", 0);
-//        userName 和 userId 本来是全局，但由于登录系统还未完成暂时用此代替
-        String userName = "庞老闆";
-        String userHeadUrl = "http://116.63.152.202:5002/userHead/default_head.png";
         TextView tvNewName = findViewById(R.id.tv_new_name);
         TextView tvAuthorName = findViewById(R.id.tv_author_name);
         ivAuthorHead = findViewById(R.id.iv_author_head);
-
         articleUrl = intent.getStringExtra(Constants.ARTICLE_URL_KEY) + "?userId=" + userId +
                 "&userName=" + userName + "&userHeadUrl=" + userHeadUrl + "&newId=" + articleID;
-        Log.d(TAG, "initData: " + articleUrl);
         authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
         authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
         authorHeadUrl = intent.getStringExtra(Constants.AUTHOR_HEAD_URL_KEY);
@@ -216,5 +233,17 @@ public class ArticleContentActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void getAuthorData() {
+
+    }
+
+    private Integer getIntegerValue(Context context, String fileName, String key) {
+        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getInt(key, 0);
+    }
+
+    private String getStringValue(Context context, String fileName, String key) {
+        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getString(key, null);
     }
 }

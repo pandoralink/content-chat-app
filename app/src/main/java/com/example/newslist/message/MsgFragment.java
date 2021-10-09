@@ -65,7 +65,6 @@ public class MsgFragment extends Fragment {
 //                    intent.putExtra(Constants.AUTHOR_NAME_KEY, messagesData.get(position).getUser_name());
 //                    intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, messagesData.get(position).getUser_account());
 //                    intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, messagesData.get(position).getAuthorHeadUrl());
-                    intent.putExtra("testUserKey", 1005);
                     startActivity(intent);
                 }
             }

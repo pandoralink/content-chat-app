@@ -45,6 +45,22 @@ public class UserInfo {
         editor.putString(userNameKey, userName);
         editor.apply();
     }
+    public UserInfo(Context context) {
+        this.mContext = context;
+    }
+
+    /**
+     * 初始化 SharedPreferences
+     * 中用户信息的 key
+     */
+    void initKey(Context context) {
+        String spFileName = context.getResources().getString(R.string.shared_preferences_file_name);
+        String accountKey = context.getResources().getString(R.string.login_account_name);
+        String passwordKey = context.getResources().getString(R.string.login_password);
+        String userIdKey = context.getResources().getString(R.string.userId);
+        String userNameKey = context.getResources().getString(R.string.userName);
+        String userHeadKey = context.getResources().getString(R.string.userHead);
+    }
 
     public static void setAccount() {
         account = "123";
@@ -67,5 +83,21 @@ public class UserInfo {
         URI oldUri = new URI(uri);
         return new URI(oldUri.getScheme(), oldUri.getAuthority(), oldUri.getPath(),
                 oldUri.getQuery() == null ? appendQuery : oldUri.getQuery() + "&" + appendQuery, oldUri.getFragment());
+    }
+
+    public static Integer getIntegerValue(Context context, String fileName, String key) {
+        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getInt(key, 0);
+    }
+
+    private Integer getIntegerValue(String fileName, String key) {
+        return mContext.getSharedPreferences(fileName, Context.MODE_PRIVATE).getInt(key, 0);
+    }
+
+    private static String getStringValue(Context context, String fileName, String key) {
+        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getString(key, null);
+    }
+
+    private String getStringValue(String fileName, String key) {
+        return mContext.getSharedPreferences(fileName, Context.MODE_PRIVATE).getString(key, null);
     }
 }

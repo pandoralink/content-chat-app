@@ -10,6 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.newslist.R;
 import com.example.newslist.data.Constants;
+import com.example.newslist.utils.UserInfoManager;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -44,7 +45,9 @@ public class ArticleFragment extends Fragment {
             tabLayout = rootView.findViewById(R.id.tl_tabs);
             vpArticleContent = rootView.findViewById(R.id.vp_article_content);
             List<Fragment> articleFragment = new ArrayList<>();
-            articleFragment.add(new ArticleListFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=1005"));
+            UserInfoManager userInfoManager = new UserInfoManager(getContext());
+
+            articleFragment.add(new ArticleListFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=" + userInfoManager.getUserId()));
             articleFragment.add(new ArticleListFragment());
             vpArticleContent.setAdapter(new ArticleFragmentPagerAdapter(getChildFragmentManager(), articleFragment));
             vpArticleContent.setOffscreenPageLimit(1);

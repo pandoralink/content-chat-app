@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.newslist.user.UserInfoActivity;
@@ -29,6 +30,8 @@ public class UserFragment extends Fragment {
     String name;
     String password;
     private Integer userId;
+    TextView tvUserName;
+    private final Integer userNameRequestCode = 10;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +42,7 @@ public class UserFragment extends Fragment {
 
         Button btnLogin = rootView.findViewById(R.id.btn_user_out);
         RelativeLayout rlUserManagerIn = rootView.findViewById(R.id.rl_user_manager_in);
+        tvUserName = rootView.findViewById(R.id.tv_user_name);
 
         initView();
         btnLogin.setOnClickListener(view -> {
@@ -97,6 +101,15 @@ public class UserFragment extends Fragment {
 
         tvUserName.setText(name);
         tvUserAccount.setText(getStringValue(context, spFileName, accountKey));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (userNameRequestCode == requestCode) {
+            tvUserName.setText(data.getStringExtra("name"));
+        }
     }
 
     private String getStringValue(Context context, String fileName, String key) {

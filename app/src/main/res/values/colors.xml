@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="selectState">#48D597</color>
     <color name="defaultTextColor">#8a000000</color>
+    <color name="defaultBackgroundColor">#F0F0F0</color>
+    <color name="radioButtonBackgroundColor">#FEFEFE</color>
 </resources>

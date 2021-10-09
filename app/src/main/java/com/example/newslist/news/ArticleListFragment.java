@@ -1,5 +1,6 @@
 package com.example.newslist.news;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
@@ -172,6 +173,7 @@ public class ArticleListFragment extends Fragment {
         if (!CURRENT_URL.matches(JUDGE_REGEX)) {
             CURRENT_URL = CURRENT_URL + "?";
         }
+        // 到时候还得转成不同格式的方法
         Request request = new Request.Builder()
                 .url(CURRENT_URL + "&offset=" + offset)
                 .get().build();

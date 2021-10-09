@@ -72,4 +72,24 @@ public class ExampleUnitTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void methodParams() {
+        UserInfo.setAccount();
+        System.out.println(UserInfo.account);
+    }
+
+    private void test1(String a, String b) {
+
+    }
+
+    @Test
+    public void gsonTest() {
+
+    }
+
+    @Test
+    public void utilsTest() {
+
+    }
 }

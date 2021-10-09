@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.newslist.LoginActivity;
 import com.example.newslist.MainActivity;
 import com.example.newslist.R;
+import com.example.newslist.UserFragment;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.news.AuthorInfoRequest;
@@ -72,7 +73,6 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void modifyUserInfo() {
-        ;
         if (etUserInfoPwd.getText().toString().equals(oldPassword) && etUserInfoName.getText().toString().equals(oldName)) {
             /**
              * EditText.getText() 可能是不同编码字符串
@@ -131,12 +131,13 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void update() {
+        String password = etUserInfoPwd.getText().toString();
+        String name = etUserInfoName.getText().toString();
         Request request = new Request.Builder()
                 .url(Constants.ARTICLE_AUTHOR_INFO_UPDATE_BASE_URL + "?user_id=" + userId
-                        + "&user_name=" + etUserInfoName.getText().toString()
-                        + "&user_password=" + etUserInfoPwd.getText().toString())
+                        + "&user_name=" + name
+                        + "&user_password=" + password)
                 .get().build();
-        Log.d("PW", "update: " + request.url());
         try {
             OkHttpClient client = new OkHttpClient();
             client.newCall(request).enqueue(new okhttp3.Callback() {
@@ -152,6 +153,16 @@ public class UserInfoActivity extends AppCompatActivity {
                         final String body = response.body().string();
                         runOnUiThread(() -> {
                             if (SUCCESS.equals(body)) {
+                                if (password.equals(oldPassword)) {
+                                    // 密码未修改则不转到 LoginActivity
+                                    Intent intent = new Intent(UserInfoActivity.this, UserFragment.class);
+                                    intent.putExtra("name", name);
+                                    UserInfoActivity.this.setResult(10, intent);
+                                    toast.setText("修改成功");
+                                    toast.setGravity(Gravity.CENTER, 0, 0);
+                                    toast.show();
+                                    return;
+                                }
                                 toast.setText("身份认证过期，请重新登录");
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();

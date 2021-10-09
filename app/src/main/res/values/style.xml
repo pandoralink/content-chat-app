@@ -3,6 +3,11 @@
 
     <style name="roundedCornerImageStyle">
         <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">25dp</item>
+    </style>
+
+    <style name="roundedCornerUserHeadImageStyle">
+        <item name="cornerFamily">rounded</item>
         <item name="cornerSize">40dp</item>
     </style>
 
