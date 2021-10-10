@@ -24,6 +24,7 @@ import com.example.newslist.UserFragment;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.news.AuthorInfoRequest;
+import com.example.newslist.utils.UserInfoManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -48,6 +49,7 @@ public class UserInfoActivity extends AppCompatActivity {
     OkHttpClient okHttpClient;
     private Integer userId;
     private static final String SUCCESS = "success";
+    UserInfoManager userInfoManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class UserInfoActivity extends AppCompatActivity {
         btnModifyUserInfo = findViewById(R.id.btn_modify_user_info);
         toast = Toast.makeText(UserInfoActivity.this, null, Toast.LENGTH_SHORT);
         okHttpClient = new OkHttpClient();
+        userInfoManager = new UserInfoManager(UserInfoActivity.this);
 
         ivInfoOut.setOnClickListener(view -> {
             finish();
@@ -155,26 +158,23 @@ public class UserInfoActivity extends AppCompatActivity {
                             if (SUCCESS.equals(body)) {
                                 if (password.equals(oldPassword)) {
                                     // 密码未修改则不转到 LoginActivity
+                                    userInfoManager.initEditor();
+                                    userInfoManager.updateUserName(name);
+                                    toastShowCenter(toast, "修改成功");
                                     Intent intent = new Intent(UserInfoActivity.this, UserFragment.class);
                                     intent.putExtra("name", name);
                                     UserInfoActivity.this.setResult(10, intent);
-                                    toast.setText("修改成功");
-                                    toast.setGravity(Gravity.CENTER, 0, 0);
-                                    toast.show();
+                                    finish();
                                     return;
                                 }
-                                toast.setText("身份认证过期，请重新登录");
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();
+                                toastShowCenter(toast, "身份认证过期，请重新登录");
                                 handleUserInfo();
                                 Intent intent = new Intent();
                                 intent.setClass(UserInfoActivity.this,
                                         LoginActivity.class);
                                 startActivity(intent);
                             } else {
-                                toast.setText("修改失败，请重新修改或者检查网络");
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();
+                                toastShowCenter(toast, "修改失败，请重新修改或者检查网络");
                             }
                         });
                     }
@@ -183,5 +183,11 @@ public class UserInfoActivity extends AppCompatActivity {
         } catch (NetworkOnMainThreadException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void toastShowCenter(Toast toast, String msg) {
+        toast.setText(msg);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }

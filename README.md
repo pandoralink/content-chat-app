@@ -553,3 +553,9 @@ android 虚拟机一直访问失败，连接 websocket 直接跳转到 onFailure
 java.lang.IllegalArgumentException: Code must be in range [1000,5000): 0
 
 okhttp websocket 连接主动关闭时报错（[1000,5000)是什么意思？）
+
+startActivityForResult and startActivity
+
+如果需要使用 onActivityResult()，页面进行跳转时必须使用 startActivityForResult()，相对于 startActivity，startActivityForResult 只是多了响应码
+
+startActivityForResult(Intent intent, int requestCode) 中 requestCode 是跳转 Activity 返回（finish(),onBackPressed()）的默认值

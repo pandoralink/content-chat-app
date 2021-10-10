@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,8 @@ public class UserFragment extends Fragment {
     String password;
     private Integer userId;
     TextView tvUserName;
-    private final Integer userNameRequestCode = 10;
+    private final Integer userNameResultCode = 10;
+    private final Integer userInfoRequestCode = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,7 +44,7 @@ public class UserFragment extends Fragment {
 
         Button btnLogin = rootView.findViewById(R.id.btn_user_out);
         RelativeLayout rlUserManagerIn = rootView.findViewById(R.id.rl_user_manager_in);
-        tvUserName = rootView.findViewById(R.id.tv_user_name);
+        tvUserName = rootView.findViewById(R.id.tv_user_page_name);
 
         initView();
         btnLogin.setOnClickListener(view -> {
@@ -57,7 +59,7 @@ public class UserFragment extends Fragment {
             intent.putExtra("name", name);
             intent.putExtra("password", password);
             intent.putExtra("userId", userId);
-            startActivity(intent);
+            startActivityForResult(intent, userInfoRequestCode);
         });
 
         return rootView;
@@ -91,7 +93,6 @@ public class UserFragment extends Fragment {
         userNameKey = getResources().getString(R.string.userName);
         userHeadKey = getResources().getString(R.string.userHead);
         userIdKey = getResources().getString(R.string.userId);
-        TextView tvUserName = rootView.findViewById(R.id.tv_user_name);
         TextView tvUserAccount = rootView.findViewById(R.id.tv_user_account);
         Context context = getContext();
 
@@ -106,9 +107,10 @@ public class UserFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (userNameRequestCode == requestCode) {
-            tvUserName.setText(data.getStringExtra("name"));
+        if (userNameResultCode == resultCode && userInfoRequestCode == requestCode) {
+            String tempName = data.getStringExtra("name");
+            tvUserName.setText(tempName);
+            name = tempName;
         }
     }
 

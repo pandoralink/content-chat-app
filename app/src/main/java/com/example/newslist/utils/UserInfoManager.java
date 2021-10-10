@@ -1,6 +1,7 @@
 package com.example.newslist.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.example.newslist.R;
 
@@ -22,6 +23,7 @@ public class UserInfoManager {
     private String userIdKey;
     private String userNameKey;
     private String userHeadKey;
+    SharedPreferences.Editor editor;
 
     public UserInfoManager(Context context) {
         this.mContext = context;
@@ -42,7 +44,27 @@ public class UserInfoManager {
     }
 
     /**
+     * 为了避免创建过多 editor
+     * 建议使用方法获取一次实例
+     *
+     * @return
+     */
+    public SharedPreferences.Editor getEditor() {
+        return mContext.getSharedPreferences(spFileName, Context.MODE_PRIVATE).edit();
+    }
+
+    public void initEditor() {
+        editor = mContext.getSharedPreferences(spFileName, Context.MODE_PRIVATE).edit();
+    }
+
+    public void updateUserName(String name) {
+        editor.putString(userNameKey, name);
+        editor.apply();
+    }
+
+    /**
      * 三行变两行
+     *
      * @return
      */
     public String getAccount() {
