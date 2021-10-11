@@ -1,5 +1,7 @@
 package com.example.newslist.message;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author 庞旺
  */
@@ -52,6 +54,14 @@ public class Messages {
         this.contentUrl = contentUrl;
     }
 
+    public Integer getAid() {
+        return aid;
+    }
+
+    public void setAid(Integer aid) {
+        this.aid = aid;
+    }
+
     private String friendName;
     private String firstMsg;
     private int head;
@@ -72,14 +82,5 @@ public class Messages {
      * 默认为 ""
      */
     private String contentUrl = "";
-
-    private ArticleRequest articleRequest = null;
-
-    public ArticleRequest getArticleRequest() {
-        return articleRequest;
-    }
-
-    public void setArticleRequest(ArticleRequest articleRequest) {
-        this.articleRequest = articleRequest;
-    }
+    private Integer aid = 0;
 }

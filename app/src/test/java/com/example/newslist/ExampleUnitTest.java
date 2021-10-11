@@ -49,6 +49,19 @@ public class ExampleUnitTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void url2Test() {
+        Request request = new Request.Builder()
+                .url(Constants.BACK_BASE_URL + "getAuthorId?newId=" + 34)
+                .get().build();
+        try {
+            OkHttpClient client = new OkHttpClient();
+            Response response = client.newCall(request).execute();
+            System.out.println(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void staticTest() {
@@ -90,6 +103,6 @@ public class ExampleUnitTest {
 
     @Test
     public void utilsTest() {
-
+        String test = "";
     }
 }

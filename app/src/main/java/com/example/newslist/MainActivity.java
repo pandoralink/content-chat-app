@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             List<MsgTip> msgTipList = gson.fromJson(text, type);
             runOnUiThread(() -> {
                 for (MsgTip msgTip : msgTipList) {
-                    sendNotification(msgTip.getContent(), msgTip.getName(), msgTip.getHeadUrl(), msgTip.getContentUrl());
+                    sendNotification(msgTip.getContent(), msgTip.getName(), msgTip.getHeadUrl(), msgTip.getContentUrl(), msgTip.getAid());
                 }
             });
         }
@@ -193,13 +193,13 @@ public class MainActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient.Builder()
                     .pingInterval(10, TimeUnit.SECONDS)
                     .build();
-            mWebSocket= client.newWebSocket(request, webSocketListener);
+            mWebSocket = client.newWebSocket(request, webSocketListener);
         } catch (NetworkOnMainThreadException ex) {
             ex.printStackTrace();
         }
     }
 
-    private void sendNotification(String content, String name, String headUrl, String contentUrl) {
+    private void sendNotification(String content, String name, String headUrl, String contentUrl, Integer aid) {
         Log.i(TAG, "sendNotification: " + content);
         Intent intent = new Intent();
         intent.putExtra("fragmentIndex", 1);
@@ -234,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
         messages.setType(2);
         messages.setHeadUrl(headUrl);
         messages.setContentUrl(contentUrl);
+        messages.setAid(aid);
         msgFragment.addTip(messages);
     }
 }

@@ -41,6 +41,14 @@ public class MsgTip {
         this.contentUrl = contentUrl;
     }
 
+    public Integer getAid() {
+        return aid;
+    }
+
+    public void setAid(Integer aid) {
+        this.aid = aid;
+    }
+
     private int id;
     private String content;
     private String name;
@@ -50,4 +58,5 @@ public class MsgTip {
      */
     private String headUrl = "";
     private String contentUrl = "";
+    private Integer aid = 0;
 }

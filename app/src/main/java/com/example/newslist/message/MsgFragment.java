@@ -49,24 +49,16 @@ public class MsgFragment extends Fragment {
         initData();
 
         messagesAdapter = new MessagesAdapter(getContext(), R.layout.list_msg_item, messagesData);
-        messagesAdapter.setOnItemClickListener(new MessagesAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (messagesData.get(position).getType() == 1) {
-                    Intent intent = new Intent(getActivity(), MsgContentActivity.class);
-                    startActivity(intent);
-                } else {
-//                    会跳转到文章页面
-                    Intent intent = new Intent(getActivity(), ArticleContentActivity.class);
-                    intent.putExtra(Constants.ARTICLE_URL_KEY, messagesData.get(position).getContentUrl());
-//                    下面这些后面再请求
-//                    intent.putExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, messagesData.get(position).getAuthorId());
-//                    intent.putExtra(Constants.ARTICLE_NAME_KEY, messagesData.get(position).getTitle());
-//                    intent.putExtra(Constants.AUTHOR_NAME_KEY, messagesData.get(position).getUser_name());
-//                    intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, messagesData.get(position).getUser_account());
-//                    intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, messagesData.get(position).getAuthorHeadUrl());
-                    startActivity(intent);
-                }
+        messagesAdapter.setOnItemClickListener((view, position) -> {
+            if (messagesData.get(position).getType() == 1) {
+                Intent intent = new Intent(getActivity(), MsgContentActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), ArticleContentActivity.class);
+                intent.putExtra(Constants.ARTICLE_URL_KEY, messagesData.get(position).getContentUrl());
+                intent.putExtra("articleId", messagesData.get(position).getAid());
+                intent.putExtra("type", 2);
+                startActivity(intent);
             }
         });
 
