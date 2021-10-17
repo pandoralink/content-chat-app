@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.newslist.data.Constants;
 import com.example.newslist.user.User;
 import com.example.newslist.utils.UserInfo;
+import com.example.newslist.utils.UserInfoManager;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -161,6 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                     savePw();
                     User user = new Gson().fromJson(body, User.class);
                     new UserInfo(LoginActivity.this, user);
+                    UserInfoManager userInfoManager = new UserInfoManager(LoginActivity.this);
+                    userInfoManager.initUserInfo(user);
                     Log.d(TAG, "onResponse: " + UserInfo.userId);
                     Intent intent = new Intent();
                     intent.setClass(LoginActivity.this,

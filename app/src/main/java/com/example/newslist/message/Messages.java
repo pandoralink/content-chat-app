@@ -62,9 +62,18 @@ public class Messages {
         this.aid = aid;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     private String friendName;
     private String firstMsg;
     private int head;
+    private int userId;
     /**
      * type：1 信息
      * type：2 通知

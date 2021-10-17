@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginStart="4dp"
     android:layout_marginTop="6dp"
     android:layout_marginEnd="4dp"
@@ -12,25 +12,26 @@
     app:cardUseCompatPadding="true">
 
     <RelativeLayout
-        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/iv_author_head"
+            android:id="@+id/iv_msg_user_head"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:shapeAppearanceOverlay="@style/roundedCornerImageStyle"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/roundedCornerImageStyle"
+            tools:src="@drawable/default_head" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/msg_content_out"
-            android:layout_toRightOf="@id/iv_author_head">
+            android:layout_toRightOf="@id/iv_msg_user_head">
 
             <TextView
                 android:id="@+id/msg_title"
@@ -42,10 +43,10 @@
                 android:paddingLeft="8dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="4dp"
-                tools:text="测试标题"
                 android:textColor="@color/selectState"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="测试标题" />
 
             <TextView
                 android:id="@+id/msg_content"
@@ -60,6 +61,7 @@
                 android:singleLine="true"
                 android:textColor="@android:color/secondary_text_light" />
         </RelativeLayout>
+
         <ImageView
             android:id="@+id/msg_content_out"
             android:layout_width="wrap_content"
@@ -67,7 +69,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_in_24"
-            />
+            android:src="@drawable/ic_in_24" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

@@ -31,6 +31,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
          * @param position
          */
         void onItemClick(View view, int position);
+
+        /**
+         * RecyclerView Item 的长按点击事件
+         *
+         * @param view
+         * @param position
+         */
+        void onItemLongClick(View view, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
@@ -58,11 +66,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         holder.firstMsg.setText(messages.getFirstMsg());
 
         if (mOnItemClickListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mOnItemClickListener.onItemClick(holder.itemView, position);
-                }
+            holder.itemView.setOnClickListener(v -> mOnItemClickListener.onItemClick(holder.itemView, position));
+            holder.itemView.setOnLongClickListener(v -> {
+                mOnItemClickListener.onItemLongClick(holder.itemView, position);
+                return false;
             });
         }
 
@@ -90,7 +97,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
             friendName = view.findViewById(R.id.msg_title);
             firstMsg = view.findViewById(R.id.msg_content);
-            head = view.findViewById(R.id.iv_author_head);
+            head = view.findViewById(R.id.iv_msg_user_head);
         }
     }
 

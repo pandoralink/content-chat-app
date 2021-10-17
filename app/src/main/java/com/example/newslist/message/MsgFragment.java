@@ -1,23 +1,21 @@
 package com.example.newslist.message;
 
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.newslist.R;
 import com.example.newslist.data.Constants;
 import com.example.newslist.news.ArticleContentActivity;
-import com.example.newslist.user.FriendActivity;
+import com.example.newslist.popup.DeleteMsgDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +24,7 @@ import java.util.List;
 /**
  * @author 庞旺
  */
-public class MsgFragment extends Fragment {
+public class MsgFragment extends Fragment implements DeleteMsgDialogFragment.NoticeDialogListener {
     private static final String TAG = "PW";
     View rootView;
     private List<Messages> messagesData;
@@ -34,6 +32,7 @@ public class MsgFragment extends Fragment {
     private RecyclerView rvMessagesList;
     private String[] friendNames = null;
     private String[] firstMsgs = null;
+    private int[] userIds = null;
     private static final String CHANNEL_ID = "comment channel";
 
     @Override
@@ -49,16 +48,24 @@ public class MsgFragment extends Fragment {
         initData();
 
         messagesAdapter = new MessagesAdapter(getContext(), R.layout.list_msg_item, messagesData);
-        messagesAdapter.setOnItemClickListener((view, position) -> {
-            if (messagesData.get(position).getType() == 1) {
-                Intent intent = new Intent(getActivity(), MsgContentActivity.class);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(getActivity(), ArticleContentActivity.class);
-                intent.putExtra(Constants.ARTICLE_URL_KEY, messagesData.get(position).getContentUrl());
-                intent.putExtra("articleId", messagesData.get(position).getAid());
-                intent.putExtra("type", 2);
-                startActivity(intent);
+        messagesAdapter.setOnItemClickListener(new MessagesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (messagesData.get(position).getType() == 1) {
+                    Intent intent = new Intent(getActivity(), MsgContentActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(getActivity(), ArticleContentActivity.class);
+                    intent.putExtra(Constants.ARTICLE_URL_KEY, messagesData.get(position).getContentUrl());
+                    intent.putExtra("articleId", messagesData.get(position).getAid());
+                    intent.putExtra("type", 2);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+                confirmDeleteMsg(position);
             }
         });
 
@@ -81,10 +88,9 @@ public class MsgFragment extends Fragment {
     private void initData() {
         messagesData = new ArrayList<>();
         int length;
-        friendNames = getResources().getStringArray(R.array.titles);
-        firstMsgs = getResources().getStringArray(R.array.authors);
-
-        TypedArray images = getResources().obtainTypedArray(R.array.images);
+        friendNames = getResources().getStringArray(R.array.userName);
+        firstMsgs = getResources().getStringArray(R.array.firstMsg);
+        userIds = getResources().getIntArray(R.array.userId);
 
         if (friendNames.length > firstMsgs.length) {
             length = friendNames.length;
@@ -96,15 +102,41 @@ public class MsgFragment extends Fragment {
             Messages message = new Messages();
             message.setFriendName(friendNames[i]);
             message.setFirstMsg(firstMsgs[i]);
-            message.setHead(images.getResourceId(i, 0));
-
+            message.setUserId(userIds[i]);
+            message.setHeadUrl("http://116.63.152.202:5002/userHead/default_head.png");
             messagesData.add(message);
         }
     }
 
     public void addTip(Messages messages) {
-        Log.d(TAG, "addTip: " + "in");
         messagesData.add(0, messages);
         messagesAdapter.notifyDataSetChanged();
+    }
+
+    public void confirmDeleteMsg(int index) {
+        DeleteMsgDialogFragment newFragment = new DeleteMsgDialogFragment(index);
+        newFragment.setOnNoticeDialogListener(new DeleteMsgDialogFragment.NoticeDialogListener() {
+            @Override
+            public void onDialogPositiveClick(DialogFragment dialog, int index) {
+                messagesData.remove(index);
+                messagesAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onDialogNegativeClick(DialogFragment dialog) {
+
+            }
+        });
+        newFragment.show(getFragmentManager(), "deleteMsg");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, int index) {
+        messagesData.remove(index);
+        messagesAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
     }
 }

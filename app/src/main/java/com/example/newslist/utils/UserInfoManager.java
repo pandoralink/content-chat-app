@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.newslist.R;
+import com.example.newslist.user.User;
 
 /**
  * 封装用户信息管理的一些方法
@@ -59,6 +60,32 @@ public class UserInfoManager {
 
     public void updateUserName(String name) {
         editor.putString(userNameKey, name);
+        editor.apply();
+    }
+
+    /**
+     * 登录数据回调后初始化用户信息
+     *
+     * @param mContext
+     * @param user
+     */
+    public void initUserInfoByContext(Context mContext, User user) {
+
+    }
+
+    /**
+     * 登录数据回调后初始化用户信息
+     * 需在 initKey 后调用
+     *
+     * @param user
+     */
+    public void initUserInfo(User user) {
+        initEditor();
+        editor.putString(accountKey, user.getUser_account());
+        editor.putString(passwordKey, user.getUser_password());
+        editor.putInt(userIdKey, user.getUser_id());
+        editor.putString(userHeadKey, user.getUser_head());
+        editor.putString(userNameKey, user.getUser_name());
         editor.apply();
     }
 
