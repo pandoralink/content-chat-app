@@ -1,11 +1,14 @@
 package com.example.newslist.user;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.text.InputType;
@@ -25,6 +28,7 @@ import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.news.AuthorInfoRequest;
 import com.example.newslist.utils.UserInfoManager;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,12 +48,13 @@ public class UserInfoActivity extends AppCompatActivity {
     private Boolean bPwdSwitch = false;
     private String oldPassword;
     private String oldName;
-    private Button btnModifyUserInfo;
+    private MaterialButton btnModifyUserInfo;
     private Toast toast;
     OkHttpClient okHttpClient;
     private Integer userId;
     private static final String SUCCESS = "success";
     UserInfoManager userInfoManager;
+    Drawable rotate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,8 @@ public class UserInfoActivity extends AppCompatActivity {
         toast = Toast.makeText(UserInfoActivity.this, null, Toast.LENGTH_SHORT);
         okHttpClient = new OkHttpClient();
         userInfoManager = new UserInfoManager(UserInfoActivity.this);
+        rotate = ContextCompat.getDrawable(UserInfoActivity.this, R.drawable.animated_rotate);
+        rotate.setBounds(0, 0, rotate.getMinimumWidth(), rotate.getMinimumHeight());
 
         ivInfoOut.setOnClickListener(view -> {
             finish();
@@ -134,6 +141,8 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void update() {
+        startAnimation();
+
         String password = etUserInfoPwd.getText().toString();
         String name = etUserInfoName.getText().toString();
         Request request = new Request.Builder()
@@ -158,6 +167,7 @@ public class UserInfoActivity extends AppCompatActivity {
                             if (SUCCESS.equals(body)) {
                                 if (password.equals(oldPassword)) {
                                     // 密码未修改则不转到 LoginActivity
+                                    stopAnimation();
                                     userInfoManager.initEditor();
                                     userInfoManager.updateUserName(name);
                                     toastShowCenter(toast, "修改成功");
@@ -167,6 +177,7 @@ public class UserInfoActivity extends AppCompatActivity {
                                     finish();
                                     return;
                                 }
+                                stopAnimation();
                                 toastShowCenter(toast, "身份认证过期，请重新登录");
                                 handleUserInfo();
                                 Intent intent = new Intent();
@@ -181,6 +192,10 @@ public class UserInfoActivity extends AppCompatActivity {
                 }
             });
         } catch (NetworkOnMainThreadException ex) {
+            runOnUiThread(() -> {
+                stopAnimation();
+                toastShowCenter(toast, "出现意外错误");
+            });
             ex.printStackTrace();
         }
     }
@@ -189,5 +204,16 @@ public class UserInfoActivity extends AppCompatActivity {
         toast.setText(msg);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    private void stopAnimation() {
+        ((Animatable) rotate).stop();
+        btnModifyUserInfo.setIcon(null);
+    }
+
+    private void startAnimation() {
+        btnModifyUserInfo.setIcon(rotate);
+        btnModifyUserInfo.setIconGravity(MaterialButton.ICON_GRAVITY_TEXT_START);
+        ((Animatable) rotate).start();
     }
 }

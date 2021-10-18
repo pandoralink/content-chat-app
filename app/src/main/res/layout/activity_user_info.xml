@@ -142,7 +142,7 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_modify_user_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -150,6 +150,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginRight="40dp"
             android:background="@drawable/circle_button"
+            app:backgroundTint="@color/selectState"
             android:text="确认修改"
             android:textColor="@color/white" />
     </LinearLayout>

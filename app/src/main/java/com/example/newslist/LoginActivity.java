@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.text.InputType;
@@ -11,18 +13,19 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.newslist.data.Constants;
 import com.example.newslist.user.User;
 import com.example.newslist.utils.UserInfo;
 import com.example.newslist.utils.UserInfoManager;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -40,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox cbRememberPwd;
     private Boolean bPwdSwitch = false;
     private Toast toast;
+    MaterialButton btnLogin;
+    Drawable rotate;
     private static final String FAILURE = "failure";
 
 
@@ -47,11 +52,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Button btnLogin = findViewById(R.id.login);
+        btnLogin = findViewById(R.id.login);
         etPwd = findViewById(R.id.et_pwd);
         etAccount = findViewById(R.id.account);
         cbRememberPwd = findViewById(R.id.rememberPwd);
         toast = Toast.makeText(LoginActivity.this, null, Toast.LENGTH_SHORT);
+        rotate = ContextCompat.getDrawable(LoginActivity.this, R.drawable.animated_rotate);
+        rotate.setBounds(0, 0, rotate.getMinimumWidth(), rotate.getMinimumHeight());
         // 初始化 view
         initLoginView();
         changePw();
@@ -141,6 +148,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+        startAnimation();
+
         Request request = new Request.Builder()
                 .url(Constants.REMOTE_LOGIN_BASE_URL + "?user_account=" + etAccount.getText().toString() + "&user_password=" + etPwd.getText().toString())
                 .get().build();
@@ -170,11 +179,7 @@ public class LoginActivity extends AppCompatActivity {
                             MainActivity.class);
                     startActivity(intent);
                 } else {
-                    runOnUiThread(() -> {
-                        toast.setText("账号/密码错误");
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();
-                    });
+                    runOnUiThread(() -> toastShowCenter(toast, "账号/密码错误"));
                 }
             }
         }
@@ -182,7 +187,28 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onFailure(Call call, IOException e) {
             Log.e(TAG, "Failed to connect server!");
+            runOnUiThread(() -> {
+                stopAnimation();
+                toastShowCenter(toast, "出现意外错误");
+            });
             e.printStackTrace();
         }
     };
+
+    private void stopAnimation() {
+        ((Animatable) rotate).stop();
+        btnLogin.setIcon(null);
+    }
+
+    private void startAnimation() {
+        btnLogin.setIcon(rotate);
+        btnLogin.setIconGravity(MaterialButton.ICON_GRAVITY_TEXT_START);
+        ((Animatable) rotate).start();
+    }
+
+    private void toastShowCenter(Toast toast, String msg) {
+        toast.setText(msg);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
 }
