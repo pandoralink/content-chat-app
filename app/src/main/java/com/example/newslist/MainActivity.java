@@ -54,10 +54,14 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup rgTabBar;
     List<Fragment> fragments = new ArrayList<>();
     private static final String TAG = "PW";
-    private static final String CHANNEL_ID = "Music channel";
+    private static final String CHANNEL_ID = "Comment Channel";
     private static int defaultPage = 0;
     Gson gson = new Gson();
     MsgFragment msgFragment;
+    /**
+     * num: 通知/提醒数量
+     */
+    public int num = 0;
     /**
      * 用 public static 关 ws 似乎有些 Bug
      * 但我还没有遇见
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: "+"再次创建MainActivity");
         setContentView(R.layout.activity_main);
         defaultPage = getIntent().getIntExtra("fragmentIndex", 0);
         initViews();
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        Log.d(TAG, "onRestart: " + "defaultPage" + getIntent().getIntExtra("fragmentIndex", 0));
     }
 
     private void initViews() {
@@ -211,9 +217,9 @@ public class MainActivity extends AppCompatActivity {
                         CHANNEL_ID);
         Notification notification = builder
                 .setAutoCancel(true)
-                // 设置该通知优先级
                 .setSmallIcon(R.drawable.ic_article_24)
                 .setContentTitle(name + "回复了你")
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setContentText(content)
                 .setContentIntent(pendingIntent)
                 .setPriority(2)
@@ -227,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
             notifyManager.createNotificationChannel(notificationChannel);
         }
         //id要保证唯一
-        notifyManager.notify(1, notification);
+        notifyManager.notify(num++, notification);
         Messages messages = new Messages();
         messages.setFriendName(name + "回复了你");
         messages.setFirstMsg(content);

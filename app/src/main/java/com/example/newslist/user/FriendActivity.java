@@ -18,13 +18,19 @@ import com.bumptech.glide.Glide;
 import com.example.newslist.Articles;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
+import com.example.newslist.data.Article;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.message.MsgContentActivity;
 import com.example.newslist.news.ArticleContentActivity;
+import com.example.newslist.news.AuthorInfoRequest;
 import com.example.newslist.popup.OperationDialogFragment;
+import com.example.newslist.utils.Author;
+import com.example.newslist.utils.UserInfoManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -41,6 +47,17 @@ public class FriendActivity extends AppCompatActivity {
     Boolean userRelate;
     int fanTotal;
     String userAccount;
+    int authorId;
+    /**
+     * currentUserId 是 APP
+     * 当前用户 id
+     */
+    int currentUserId;
+    TextView tvAccount;
+    Button btnFollow;
+    TextView tvFanNum;
+    TextView tvAuthorName;
+    ImageView iv_author_head;
     private RecyclerView rvNewsList;
     private NewsAdapter newsAdapter;
     private List<Articles> articlesData;
@@ -52,26 +69,47 @@ public class FriendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friend);
 
         Intent intent = getIntent();
-        ImageView iv_author_head = findViewById(R.id.iv_author_head);
-        TextView tvAuthorName = findViewById(R.id.tv_user_name);
-        Button btnFollow = findViewById(R.id.btn_follow_user);
-        TextView tvAccount = findViewById(R.id.tv_account);
-        TextView tvFanNum = findViewById(R.id.tv_fan_num);
+        btnFollow = findViewById(R.id.btn_follow_user);
+        tvAccount = findViewById(R.id.tv_account);
+        iv_author_head = findViewById(R.id.iv_author_head);
+        tvAuthorName = findViewById(R.id.tv_user_name);
+        tvFanNum = findViewById(R.id.tv_fan_num);
         String authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
         String authorHeadUrl = intent.getStringExtra(Constants.AUTHOR_HEAD_URL_KEY);
+        UserInfoManager userInfoManager = new UserInfoManager(this);
 
         userRelate = intent.getBooleanExtra(Constants.USER_RELATE_KEY, false);
         fanTotal = intent.getIntExtra(Constants.AUTHOR_FAN_TOTAL_KEY, 0);
         userAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
-        tvFanNum.setText(Integer.toString(fanTotal) + " 粉丝");
-        tvAccount.setText(userAccount);
-        tvAuthorName.setText(authorName);
-        Glide.with(FriendActivity.this).load(authorHeadUrl).into(iv_author_head);
-        if (userRelate) {
-            btnFollow.setText("√已关注");
+        authorId = intent.getIntExtra("authorId", 0);
+        /**
+         * 若没有初始化当前 APP 用户信息
+         * UserInfoManager.getUserId()
+         * 将不起作用
+         */
+        currentUserId = userInfoManager.getUserId();
+
+        if (intent.getStringExtra("authorJSON") == null) {
+            tvAccount.setText(userAccount);
+            if (userRelate) {
+                btnFollow.setText("√已关注");
+            } else {
+                btnFollow.setText("+关注");
+            }
+            tvAuthorName.setText(authorName);
+            Glide.with(FriendActivity.this).load(authorHeadUrl).into(iv_author_head);
+            tvFanNum.setText(Integer.toString(fanTotal) + " 粉丝");
         } else {
-            btnFollow.setText("+关注");
+            Gson gson = new Gson();
+            // 用到 author 的地方其实是普通用户，后期可能改名
+            Author author = gson.fromJson(intent.getStringExtra("authorJSON"), Author.class);
+            authorId = author.getUid();
+            tvAuthorName.setText(author.getUname());
+            Glide.with(FriendActivity.this).load(author.getUheadUrl()).into(iv_author_head);
+            getUserAccountByUID(author.getUid());
+            getRelate(author.getUid(), currentUserId);
         }
+
         btnFollow.setOnClickListener(view -> {
             userRelate = !userRelate;
             if (userRelate) {
@@ -160,7 +198,7 @@ public class FriendActivity extends AppCompatActivity {
                 intent.putExtra(Constants.AUTHOR_NAME_KEY, articlesData.get(position).getUser_name());
                 intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, articlesData.get(position).getUser_account());
                 intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, articlesData.get(position).getAuthorHeadUrl());
-                intent.putExtra("testUserKey", 1005);
+                intent.putExtra("testUserKey", currentUserId);
                 startActivity(intent);
             }
         });
@@ -181,6 +219,86 @@ public class FriendActivity extends AppCompatActivity {
             client.newCall(request).enqueue(callback);
         } catch (NetworkOnMainThreadException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void getUserAccountByUID(int uid) {
+        Request request = new Request.Builder()
+                .url(Constants.BACK_BASE_URL + "getUserAccount?uid=" + uid)
+                .get().build();
+        try {
+            OkHttpClient client = new OkHttpClient();
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    final String body = response.body().string();
+                    if (response.isSuccessful()) {
+                        Gson gson = new Gson();
+                        userAccount = body;
+                        refreshData();
+                        runOnUiThread(() -> {
+                            tvAccount.setText(body);
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                }
+            });
+        } catch (NetworkOnMainThreadException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取作者和当前用户的关系
+     * 关注 || 不关注
+     *
+     * @param authorId
+     * @param userId
+     */
+    private void getRelate(Integer authorId, Integer userId) {
+        if (authorId == 0 || userId == 0) {
+        } else {
+            Request request = new Request.Builder()
+                    .url(Constants.ARTICLE_AUTHOR_INFO_BASE_URL + "?blogger_id=" + authorId + "&fan_id=" + userId)
+                    .get().build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                client.newCall(request).enqueue(new okhttp3.Callback() {
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            final String body = response.body().string();
+                            runOnUiThread(() -> {
+                                Gson gson = new Gson();
+                                Type jsonType = new TypeToken<BaseResponse<AuthorInfoRequest>>() {
+                                }.getType();
+                                BaseResponse<AuthorInfoRequest> authorInfoResponse = gson.fromJson(body, jsonType);
+                                AuthorInfoRequest authorInfoRequest = (AuthorInfoRequest) authorInfoResponse.getData();
+                                userRelate = authorInfoRequest.getAuthorRelate();
+                                int total = authorInfoRequest.getFanTotal();
+                                if (userRelate) {
+                                    btnFollow.setText("√已关注");
+                                } else {
+                                    btnFollow.setText("+关注");
+                                }
+                                tvFanNum.setText(Integer.toString(fanTotal) + " 粉丝");
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                    }
+                });
+            } catch (NetworkOnMainThreadException ex) {
+                Log.e(TAG, "Failed to connect server!");
+                ex.printStackTrace();
+            }
         }
     }
 }

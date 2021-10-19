@@ -474,7 +474,18 @@ webView.getSettings().setJavaScriptEnabled(true);
    3. 通知提醒未能显示前台
    4. 通知提醒没有在后台显示叠加
 
+10/19
+
+1. android
+   1. 关注列表再次刷新会出现重复数据
+   2. 通知保活
+   3. 通知/提醒保存本地
+   4. 浏览记录保存本地
+   5. 点击头像跳转个人主页
+
 回复离线作者时的时候似乎没有通知提醒
+
+**通知/提醒横幅显示需要在相应的系统中开启横幅通知，否则只能在下拉通知栏中显示**
 
 ## 移动端访问 PC 端开发页面
 
@@ -569,3 +580,8 @@ startActivityForResult and startActivity
 如果需要使用 onActivityResult()，页面进行跳转时必须使用 startActivityForResult()，相对于 startActivity，startActivityForResult 只是多了响应码
 
 startActivityForResult(Intent intent, int requestCode) 中 requestCode 是跳转 Activity 返回（finish(),onBackPressed()）的默认值
+
+参考链接
+
+[居中显示并旋转 android Button 里的属性drawableLeft](https://blog.csdn.net/langzxz/article/details/47069235)
+[安卓Notification 推送多条只显示一条问题](https://blog.csdn.net/Jason_HD/article/details/82455471)

@@ -2,6 +2,7 @@ package com.example.newslist;
 
 import com.example.newslist.data.Constants;
 import com.example.newslist.user.User;
+import com.example.newslist.utils.Author;
 import com.example.newslist.utils.UserInfo;
 import com.google.gson.Gson;
 
@@ -97,12 +98,18 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void gsonTest() {
-
+    public void utilsTest() {
+        String test = "";
     }
 
     @Test
-    public void utilsTest() {
-        String test = "";
+    public void gsonTest() {
+        Author author = new Author();
+        author.setUheadUrl("123");
+        author.setUname("123");
+        author.setUid(123);
+        Gson gson = new Gson();
+        Author author1 = gson.fromJson(gson.toJson(author),Author.class);
+        System.out.println(author1.getUheadUrl());
     }
 }

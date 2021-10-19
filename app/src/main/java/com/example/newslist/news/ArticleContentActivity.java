@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -22,6 +23,7 @@ import com.example.newslist.R;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.user.User;
+import com.example.newslist.utils.JsToUserPage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -95,69 +97,8 @@ public class ArticleContentActivity extends AppCompatActivity {
             }
         });
 
+        initView();
         initDataJudge();
-    }
-
-    private okhttp3.Callback callback = new okhttp3.Callback() {
-        @Override
-        public void onResponse(Call call, Response response)
-                throws IOException {
-            if (response.isSuccessful()) {
-                final String body = response.body().string();
-                runOnUiThread(() -> {
-                    Gson gson = new Gson();
-                    Type jsonType = new TypeToken<BaseResponse<AuthorInfoRequest>>() {
-                    }.getType();
-                    BaseResponse<AuthorInfoRequest> authorInfoResponse = gson.fromJson(body, jsonType);
-                    AuthorInfoRequest authorInfoRequest = (AuthorInfoRequest) authorInfoResponse.getData();
-                    userRelate = authorInfoRequest.getAuthorRelate();
-                    int total = authorInfoRequest.getFanTotal();
-                    ivAuthorHead.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getApplicationContext(), FriendActivity.class);
-                            intent.putExtra(Constants.AUTHOR_NAME_KEY, authorName);
-                            intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, authorHeadUrl);
-                            intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, authorAccount);
-                            intent.putExtra(Constants.USER_RELATE_KEY, userRelate);
-                            intent.putExtra(Constants.AUTHOR_FAN_TOTAL_KEY, total);
-                            startActivity(intent);
-                        }
-                    });
-                    if (userRelate) {
-                        btnFollow.setText("√已关注");
-                    } else {
-                        btnFollow.setText("+关注");
-                    }
-                    initView();
-                });
-            }
-        }
-
-        @Override
-        public void onFailure(Call call, IOException e) {
-            Log.e(TAG, "Failed to connect server!");
-            e.printStackTrace();
-        }
-    };
-
-    private void initData() {
-        Intent intent = getIntent();
-        articleID = intent.getIntExtra("NewIDKey", 0);
-        authorId = intent.getIntExtra(Constants.ARTICLE_AUTHOR_INFO_KEY, 0);
-        TextView tvAuthorName = findViewById(R.id.tv_author_name);
-        ivAuthorHead = findViewById(R.id.iv_author_head);
-        articleUrl = intent.getStringExtra(Constants.ARTICLE_URL_KEY) + "?userId=" + userId +
-                "&userName=" + userName + "&userHeadUrl=" + userHeadUrl + "&newId=" + articleID;
-        authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
-        authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
-        authorHeadUrl = intent.getStringExtra(Constants.AUTHOR_HEAD_URL_KEY);
-        authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
-        tvNewName.setText(intent.getStringExtra(Constants.ARTICLE_NAME_KEY));
-        tvAuthorName.setText(authorName);
-        Glide.with(ArticleContentActivity.this).load(authorHeadUrl).into(ivAuthorHead);
-
-        getRelate(authorId, userId);
     }
 
     private void initView() {
@@ -177,6 +118,7 @@ public class ArticleContentActivity extends AppCompatActivity {
         });
         /* 设置WebView属性,运行执行js脚本 */
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new JsToUserPage(this), "JsToUserPage");
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.loadUrl(articleUrl);
     }
@@ -247,10 +189,11 @@ public class ArticleContentActivity extends AppCompatActivity {
         TextView tvNewName = findViewById(R.id.tv_new_name);
         TextView tvAuthorName = findViewById(R.id.tv_author_name);
         ivAuthorHead = findViewById(R.id.iv_author_head);
-        articleUrl = articleUrl + "?userId=" + userId +
-                "&userName=" + userName + "&userHeadUrl=" + userHeadUrl + "&newId=" + articleID;
+        initArticleUrl();
 
         initView();
+        // 在等待请求完成的过程中用户点击作者头像无法进入用户主页，可以优化的一个点
+        getRelate(authorId, userId);
 
         authorAccount = intent.getStringExtra(Constants.AUTHOR_ACCOUNT_KEY);
         authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
@@ -364,6 +307,50 @@ public class ArticleContentActivity extends AppCompatActivity {
             }
         }
     }
+
+    private okhttp3.Callback callback = new okhttp3.Callback() {
+        @Override
+        public void onResponse(Call call, Response response)
+                throws IOException {
+            if (response.isSuccessful()) {
+                final String body = response.body().string();
+                runOnUiThread(() -> {
+                    Gson gson = new Gson();
+                    Type jsonType = new TypeToken<BaseResponse<AuthorInfoRequest>>() {
+                    }.getType();
+                    BaseResponse<AuthorInfoRequest> authorInfoResponse = gson.fromJson(body, jsonType);
+                    AuthorInfoRequest authorInfoRequest = (AuthorInfoRequest) authorInfoResponse.getData();
+                    userRelate = authorInfoRequest.getAuthorRelate();
+                    int total = authorInfoRequest.getFanTotal();
+                    ivAuthorHead.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG, "onClick: " + "in");
+                            Intent intent = new Intent(getApplicationContext(), FriendActivity.class);
+                            intent.putExtra(Constants.AUTHOR_NAME_KEY, authorName);
+                            intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, authorHeadUrl);
+                            intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, authorAccount);
+                            intent.putExtra(Constants.USER_RELATE_KEY, userRelate);
+                            intent.putExtra(Constants.AUTHOR_FAN_TOTAL_KEY, total);
+                            intent.putExtra("authorId", authorId);
+                            startActivity(intent);
+                        }
+                    });
+                    if (userRelate) {
+                        btnFollow.setText("√已关注");
+                    } else {
+                        btnFollow.setText("+关注");
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onFailure(Call call, IOException e) {
+            Log.e(TAG, "Failed to connect server!");
+            e.printStackTrace();
+        }
+    };
 
     private Integer getIntegerValue(Context context, String fileName, String key) {
         return context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getInt(key, 0);
