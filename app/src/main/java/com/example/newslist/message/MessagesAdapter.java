@@ -76,10 +76,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         if (!messagesData.get(position).getHeadUrl().isEmpty()) {
             Glide.with(mContext).load(messagesData.get(position).getHeadUrl()).into(holder.head);
         }
-
-        if (messages.getHead() != -1) {
-            holder.head.setImageResource(messages.getHead());
-        }
     }
 
     @Override

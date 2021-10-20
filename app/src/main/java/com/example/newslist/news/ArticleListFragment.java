@@ -17,6 +17,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.newslist.Articles;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
+import com.example.newslist.data.Article;
+import com.example.newslist.data.ArticleLocalDataSource;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.popup.OperationDialogFragment;
@@ -50,6 +52,7 @@ public class ArticleListFragment extends Fragment {
     private String[] authors = null;
     private String CURRENT_URL;
     private int offset = 0;
+    ArticleLocalDataSource mLocalDataSource;
     /**
      * JUDGE_REGEX 判断是否是
      * 带 ? 的 URL
@@ -74,14 +77,10 @@ public class ArticleListFragment extends Fragment {
 
         rvNewsList = rootView.findViewById(R.id.lv_article_list);
         okHttpClient = new OkHttpClient();
+        mLocalDataSource = new ArticleLocalDataSource(getContext());
 
         swipe = rootView.findViewById(R.id.swipe);
-        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshData();
-            }
-        });
+        swipe.setOnRefreshListener(() -> refreshData());
 
         initData();
 
@@ -118,6 +117,7 @@ public class ArticleListFragment extends Fragment {
 
             @Override
             public void onItemClick(View view, int position) {
+                insertLocalCache(articlesData.get(position));
                 Intent intent = new Intent(getActivity(), ArticleContentActivity.class);
                 intent.putExtra(Constants.ARTICLE_URL_KEY, articlesData.get(position).getArticle());
                 intent.putExtra("NewIDKey", articlesData.get(position).getaId());
@@ -134,6 +134,15 @@ public class ArticleListFragment extends Fragment {
         rvNewsList.setLayoutManager(llm);
         rvNewsList.setAdapter(newsAdapter);
         refreshData();
+    }
+
+    /**
+     * 加入浏览记录
+     *
+     * @param article
+     */
+    private void insertLocalCache(Articles article) {
+        mLocalDataSource.insertArticle(article);
     }
 
     private okhttp3.Callback callback = new okhttp3.Callback() {

@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author 庞旺
  */
-public class MsgFragment extends Fragment implements DeleteMsgDialogFragment.NoticeDialogListener {
+public class MsgFragment extends Fragment {
     private static final String TAG = "PW";
     View rootView;
     private List<Messages> messagesData;
@@ -128,15 +128,5 @@ public class MsgFragment extends Fragment implements DeleteMsgDialogFragment.Not
             }
         });
         newFragment.show(getFragmentManager(), "deleteMsg");
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog, int index) {
-        messagesData.remove(index);
-        messagesAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
     }
 }

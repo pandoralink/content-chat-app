@@ -6,6 +6,14 @@ import com.google.gson.annotations.SerializedName;
  * new 表对应泛型
  */
 public class Article {
+    public Article(Integer newId, String newUrl, Integer newOwnerId, String newName, String articleCoverUrl) {
+        this.newId = newId;
+        this.newUrl = newUrl;
+        this.newOwnerId = newOwnerId;
+        this.newName = newName;
+        this.articleCoverUrl = articleCoverUrl;
+    }
+
     public Integer getNewId() {
         return newId;
     }

@@ -68,20 +68,31 @@ public class Articles {
         this.authorHeadUrl = authorHeadUrl;
     }
 
+    public Articles(Integer aId, String article, String title, Integer authorId, String article_cover_url, String user_account, String user_name, String authorHeadUrl) {
+        this.aId = aId;
+        this.article = article;
+        this.title = title;
+        this.authorId = authorId;
+        this.article_cover_url = article_cover_url;
+        this.user_account = user_account;
+        this.user_name = user_name;
+        this.authorHeadUrl = authorHeadUrl;
+    }
+
+    @SerializedName("new_id")
+    private Integer aId;
+    @SerializedName("new_url")
+    private String article;
+    @SerializedName("new_name")
+    private String title;
+    @SerializedName("new_owner_id")
+    private Integer authorId;
     private String article_cover_url = "";
     private String user_account;
     /**
      * 作者名称
      */
     private String user_name;
-    @SerializedName("new_id")
-    private Integer aId;
-    @SerializedName("new_name")
-    private String title;
-    @SerializedName("new_url")
-    private String article;
-    @SerializedName("new_owner_id")
-    private Integer authorId;
     @SerializedName("user_head")
     private String authorHeadUrl;
 }

@@ -22,14 +22,6 @@ public class Messages {
         this.firstMsg = firstMsg;
     }
 
-    public int getHead() {
-        return head;
-    }
-
-    public void setHead(int head) {
-        this.head = head;
-    }
-
     public int getType() {
         return type;
     }
@@ -72,7 +64,6 @@ public class Messages {
 
     private String friendName;
     private String firstMsg;
-    private int head;
     private int userId;
     /**
      * type：1 信息

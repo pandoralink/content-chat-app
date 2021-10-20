@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -26,7 +25,7 @@ import com.example.newslist.data.MsgTip;
 import com.example.newslist.message.Messages;
 import com.example.newslist.message.MsgFragment;
 import com.example.newslist.news.ArticleFragment;
-import com.example.newslist.utils.UserInfo;
+import com.example.newslist.user.UserFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -36,8 +35,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
