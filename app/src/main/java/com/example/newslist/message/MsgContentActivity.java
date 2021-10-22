@@ -23,24 +23,12 @@ public class MsgContentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_msg_content);
 
         ImageView msgContentOut = findViewById(R.id.msg_content_out);
-        ImageView ivMsgOption = findViewById(R.id.iv_msg_option);
         GridLayout glMsgOption = findViewById(R.id.gl_msg_option);
 
         msgContentOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
-            }
-        });
-
-        ivMsgOption.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(glMsgOption.getVisibility() == View.VISIBLE) {
-                    glMsgOption.setVisibility(View.GONE);
-                } else {
-                    glMsgOption.setVisibility(View.VISIBLE);
-                }
             }
         });
     }

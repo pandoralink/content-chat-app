@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newslist.R;
+import com.example.newslist.data.ArticleLocalDataSource;
 import com.example.newslist.data.Constants;
 import com.example.newslist.news.ArticleContentActivity;
 import com.example.newslist.popup.DeleteMsgDialogFragment;
@@ -41,7 +42,6 @@ public class MsgFragment extends Fragment {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_msg, container, false);
         }
-        Log.i(TAG, "onCreate: " + "是否重新创建");
 
         rvMessagesList = rootView.findViewById(R.id.rv_msg_list);
 
@@ -68,6 +68,7 @@ public class MsgFragment extends Fragment {
                 confirmDeleteMsg(position);
             }
         });
+        initLocalMsgTipCache();
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rvMessagesList.setLayoutManager(llm);
@@ -109,6 +110,7 @@ public class MsgFragment extends Fragment {
     }
 
     public void addTip(Messages messages) {
+        insertLocalMsgCache(messages);
         messagesData.add(0, messages);
         messagesAdapter.notifyDataSetChanged();
     }
@@ -118,6 +120,7 @@ public class MsgFragment extends Fragment {
         newFragment.setOnNoticeDialogListener(new DeleteMsgDialogFragment.NoticeDialogListener() {
             @Override
             public void onDialogPositiveClick(DialogFragment dialog, int index) {
+                deleteLocalMsgTipCache(messagesData.get(index).getFirstMsg());
                 messagesData.remove(index);
                 messagesAdapter.notifyDataSetChanged();
             }
@@ -128,5 +131,26 @@ public class MsgFragment extends Fragment {
             }
         });
         newFragment.show(getFragmentManager(), "deleteMsg");
+    }
+
+    private void deleteLocalMsgTipCache(String firstMsg) {
+        ArticleLocalDataSource.getInstance(getContext()).deleteMsgTip(firstMsg);
+    }
+
+    private void insertLocalMsgCache(Messages messages) {
+        ArticleLocalDataSource.getInstance(getContext()).insertMsgTip(messages);
+    }
+
+    private void initLocalMsgTipCache() {
+        List<Messages> data = getLocalMsgTipCache();
+
+        for (Messages message : data) {
+            messagesData.add(0, message);
+        }
+        messagesAdapter.notifyDataSetChanged();
+    }
+
+    private List<Messages> getLocalMsgTipCache() {
+        return ArticleLocalDataSource.getInstance(getContext()).getMsgTip();
     }
 }

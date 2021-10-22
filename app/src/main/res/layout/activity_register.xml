@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".RegisterActivity">
 
     <!--    账号-->
     <RelativeLayout
@@ -39,7 +39,7 @@
             android:src="@drawable/ic_account_on_32" />
 
         <EditText
-            android:id="@+id/account"
+            android:id="@+id/et_register_name"
             android:layout_width="301dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -47,7 +47,7 @@
             android:layout_marginLeft="48dp"
             android:layout_marginRight="48dp"
             android:background="@android:color/transparent"
-            android:hint="输入账号"
+            android:hint="输入用户名"
             android:inputType="text"
             android:maxLines="1" />
     </RelativeLayout>
@@ -68,7 +68,7 @@
             android:src="@drawable/ic_forget_password_32" />
 
         <EditText
-            android:id="@+id/et_pwd"
+            android:id="@+id/et_register_pwd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -93,36 +93,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <CheckBox
-            android:id="@+id/rememberPwd"
-            style="@style/Widget.AppCompat.CompoundButton.RadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="记住密码"
-            android:textColor="@color/defaultTextColor"
-            android:theme="@style/CheckBoxTheme" />
-
-        <TextView
-            android:id="@+id/tv_login_register"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/rememberPwd"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:text="注册" />
-    </RelativeLayout>
-    <!--    登录-->
-    <RelativeLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:layout_weight="1">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/login"
+            android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -130,7 +106,7 @@
             android:layout_marginTop="33dp"
             android:layout_marginRight="40dp"
             android:background="@drawable/circle_button"
-            android:text="登录"
+            android:text="注册"
             android:textColor="@color/white"
             app:backgroundTint="@color/selectState" />
     </RelativeLayout>

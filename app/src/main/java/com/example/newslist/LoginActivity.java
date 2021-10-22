@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,9 +44,12 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox cbRememberPwd;
     private Boolean bPwdSwitch = false;
     private Toast toast;
+    private TextView tvLoginRegister;
     MaterialButton btnLogin;
     Drawable rotate;
     private static final String FAILURE = "failure";
+    private final int MIN_PASSWORD_LENGTH = 6;
+    private final int MAX_PASSWORD_LENGTH = 10;
 
 
     @Override
@@ -56,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         etPwd = findViewById(R.id.et_pwd);
         etAccount = findViewById(R.id.account);
         cbRememberPwd = findViewById(R.id.rememberPwd);
+        tvLoginRegister = findViewById(R.id.tv_login_register);
         toast = Toast.makeText(LoginActivity.this, null, Toast.LENGTH_SHORT);
         rotate = ContextCompat.getDrawable(LoginActivity.this, R.drawable.animated_rotate);
         rotate.setBounds(0, 0, rotate.getMinimumWidth(), rotate.getMinimumHeight());
@@ -65,6 +70,11 @@ public class LoginActivity extends AppCompatActivity {
 
         btnLogin.setOnClickListener(view -> {
             login();
+        });
+
+        tvLoginRegister.setOnClickListener(view -> {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -148,6 +158,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+        String userAccount = etAccount.getText().toString();
+        String password = etPwd.getText().toString();
+
+        if (userAccount.isEmpty() || password.isEmpty()) {
+            toastShowCenter(toast, "用户名或密码不能为空");
+            return;
+        } else if (password.length() < MIN_PASSWORD_LENGTH) {
+            toastShowCenter(toast, "密码长度不能小于 6");
+            return;
+        } else if (password.length() > MAX_PASSWORD_LENGTH) {
+            toastShowCenter(toast, "密码长度不能大于 10");
+            return;
+        }
+
         startAnimation();
 
         Request request = new Request.Builder()
@@ -173,13 +197,15 @@ public class LoginActivity extends AppCompatActivity {
                     new UserInfo(LoginActivity.this, user);
                     UserInfoManager userInfoManager = new UserInfoManager(LoginActivity.this);
                     userInfoManager.initUserInfo(user);
-                    Log.d(TAG, "onResponse: " + UserInfo.userId);
                     Intent intent = new Intent();
                     intent.setClass(LoginActivity.this,
                             MainActivity.class);
                     startActivity(intent);
                 } else {
-                    runOnUiThread(() -> toastShowCenter(toast, "账号/密码错误"));
+                    runOnUiThread(() -> {
+                        stopAnimation();
+                        toastShowCenter(toast, "账号/密码错误");
+                    });
                 }
             }
         }

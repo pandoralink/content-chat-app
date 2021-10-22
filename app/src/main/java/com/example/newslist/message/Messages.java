@@ -62,6 +62,19 @@ public class Messages {
         this.userId = userId;
     }
 
+    public Messages(String friendName, String firstMsg, int type, String headUrl, String contentUrl, Integer aid) {
+        this.friendName = friendName;
+        this.firstMsg = firstMsg;
+        this.type = type;
+        this.headUrl = headUrl;
+        this.contentUrl = contentUrl;
+        this.aid = aid;
+    }
+
+    public Messages() {
+
+    }
+
     private String friendName;
     private String firstMsg;
     private int userId;

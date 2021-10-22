@@ -1,6 +1,5 @@
 package com.example.newslist.news;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
@@ -17,7 +16,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.newslist.Articles;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
-import com.example.newslist.data.Article;
 import com.example.newslist.data.ArticleLocalDataSource;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
@@ -46,26 +44,23 @@ public class ArticleListFragment extends Fragment {
     private RecyclerView rvNewsList;
     private NewsAdapter newsAdapter;
     private List<Articles> articlesData;
-    private OkHttpClient okHttpClient;
     private SwipeRefreshLayout swipe;
-    private String[] titles = null;
-    private String[] authors = null;
     private String CURRENT_URL;
     private int offset = 0;
-    ArticleLocalDataSource mLocalDataSource;
     /**
-     * JUDGE_REGEX 判断是否是
-     * 带 ? 的 URL
-     * ? 好像不能转义？
+     * type: 关注 or 推荐
+     * 关注: 1 推荐: 0
+     * 默认为 0
      */
-    private String JUDGE_REGEX = "[?]";
+    private Integer type = 0;
 
     public ArticleListFragment() {
         CURRENT_URL = Constants.ARTICLE_URL;
     }
 
-    public ArticleListFragment(String currentUrl) {
+    public ArticleListFragment(String currentUrl, Integer type) {
         CURRENT_URL = currentUrl;
+        this.type = type;
     }
 
     @Override
@@ -76,8 +71,6 @@ public class ArticleListFragment extends Fragment {
         }
 
         rvNewsList = rootView.findViewById(R.id.lv_article_list);
-        okHttpClient = new OkHttpClient();
-        mLocalDataSource = new ArticleLocalDataSource(getContext());
 
         swipe = rootView.findViewById(R.id.swipe);
         swipe.setOnRefreshListener(() -> refreshData());
@@ -142,7 +135,7 @@ public class ArticleListFragment extends Fragment {
      * @param article
      */
     private void insertLocalCache(Articles article) {
-        mLocalDataSource.insertArticle(article);
+        ArticleLocalDataSource.getInstance(getContext()).insertArticle(article);
     }
 
     private okhttp3.Callback callback = new okhttp3.Callback() {
@@ -179,15 +172,17 @@ public class ArticleListFragment extends Fragment {
 
     private void refreshData() {
         swipe.setRefreshing(true);
-        if (!CURRENT_URL.matches(JUDGE_REGEX)) {
+        if (!type.equals(1)) {
             CURRENT_URL = CURRENT_URL + "?";
         }
-        // 到时候还得转成不同格式的方法
+        else {
+            articlesData.clear();
+        }
         Request request = new Request.Builder()
                 .url(CURRENT_URL + "&offset=" + offset)
                 .get().build();
         try {
-            Log.d(TAG, "refreshData: " + request);
+            Log.d(TAG, "refreshData: " + request + " type: " + type);
             OkHttpClient client = new OkHttpClient();
             client.newCall(request).enqueue(callback);
         } catch (NetworkOnMainThreadException ex) {

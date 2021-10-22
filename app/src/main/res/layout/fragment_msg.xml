@@ -23,17 +23,12 @@
             android:textSize="20sp" />
     </RelativeLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_msg_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rl_nav_bar">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_msg_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        android:layout_below="@id/rl_nav_bar"
+        android:scrollbars="none" />
 
 </RelativeLayout>

@@ -47,7 +47,7 @@ public class ArticleFragment extends Fragment {
             List<Fragment> articleFragment = new ArrayList<>();
             UserInfoManager userInfoManager = new UserInfoManager(getContext());
 
-            articleFragment.add(new ArticleListFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=" + userInfoManager.getUserId()));
+            articleFragment.add(new ArticleListFragment(Constants.FOLLOW_AUTHOR_ARTICLE_URL + "?fan_id=" + userInfoManager.getUserId(),1));
             articleFragment.add(new ArticleListFragment());
             vpArticleContent.setAdapter(new ArticleFragmentPagerAdapter(getChildFragmentManager(), articleFragment));
             vpArticleContent.setOffscreenPageLimit(1);

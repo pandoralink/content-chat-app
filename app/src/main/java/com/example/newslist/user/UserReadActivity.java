@@ -8,6 +8,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -31,7 +32,6 @@ public class UserReadActivity extends AppCompatActivity {
     private NewsAdapter newsAdapter;
     private List<Articles> articlesData;
     int currentUserId;
-    ArticleLocalDataSource mLocalDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,6 @@ public class UserReadActivity extends AppCompatActivity {
         ImageView ivUserReadOut = findViewById(R.id.iv_user_read_out);
         UserInfoManager userInfoManager = new UserInfoManager(this);
         currentUserId = userInfoManager.getUserId();
-        mLocalDataSource = new ArticleLocalDataSource(this);
 
         ivUserReadOut.setOnClickListener(view -> {
             finish();
@@ -81,7 +80,8 @@ public class UserReadActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        List<Articles> articles = mLocalDataSource.getArticles();
+        List<Articles> articles = ArticleLocalDataSource.getInstance(UserReadActivity.this).getArticles();
+        Log.d("PW", "getData: " + articles);
         for (Articles article : articles) {
             newsAdapter.add(article);
         }
@@ -93,7 +93,7 @@ public class UserReadActivity extends AppCompatActivity {
         myDialogFragment.setOnNoticeDialogListener(new MyDialogFragment.NoticeDialogListener() {
             @Override
             public void onDialogPositiveClick(DialogFragment dialog, int index) {
-                mLocalDataSource.deleteArticle(articlesData.get(index).getaId());
+                ArticleLocalDataSource.getInstance(UserReadActivity.this).deleteArticle(articlesData.get(index).getaId());
                 articlesData.remove(index);
                 newsAdapter.notifyDataSetChanged();
             }

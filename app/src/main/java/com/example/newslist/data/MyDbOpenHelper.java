@@ -37,7 +37,7 @@ public class MyDbOpenHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + MsgTipContract.MsgTipEntry.TABLE_NAME;
 
     public static final int DATABASE_VERSION = 2;
-    public static final String DATABASE_NAME = "articles.db";
+    public static final String DATABASE_NAME = "article.db";
 
     private Context mContext;
 

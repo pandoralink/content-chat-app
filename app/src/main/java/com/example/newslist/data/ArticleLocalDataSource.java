@@ -10,15 +10,26 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.newslist.Articles;
+import com.example.newslist.message.Messages;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArticleLocalDataSource {
     private MyDbOpenHelper myDbOpenHelper;
+    private static ArticleLocalDataSource INSTANCE;
 
     public ArticleLocalDataSource(@NonNull Context context) {
         myDbOpenHelper = new MyDbOpenHelper(context);
+    }
+
+    public static ArticleLocalDataSource getInstance(@NonNull Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = new ArticleLocalDataSource(context);
+        }
+        return INSTANCE;
     }
 
     public List<Articles> getArticles() {
@@ -58,7 +69,6 @@ public class ArticleLocalDataSource {
             c.close();
         }
         db.close();
-
         return articles;
     }
 
@@ -74,9 +84,15 @@ public class ArticleLocalDataSource {
     }
 
     public void insertArticle(Articles article) {
-        SQLiteDatabase db = myDbOpenHelper.getWritableDatabase();
 
         if (!isArticlesExist(article.getaId())) {
+            /**
+             * 这里面有一个致命的错误，当我们调用 isArticlesExist() 时
+             * 如果在里面关闭了 db，那么则有可能关闭 insertArticle
+             * 想要操作的 db，这样会导致无法对 db 进行操作
+             */
+            SQLiteDatabase db = myDbOpenHelper.getWritableDatabase();
+
             ContentValues values = new ContentValues();
             values.put(ArticleContract.ArticleEntry.COLUMN_NAME_AID, article.getaId());
             values.put(ArticleContract.ArticleEntry.COLUMN_NAME_URL, article.getArticle());
@@ -88,7 +104,6 @@ public class ArticleLocalDataSource {
             values.put(ArticleContract.ArticleEntry.COLUMN_NAME_AUTHORHEADURL, article.getAuthorHeadUrl());
 
             db.insert(ArticleContract.ArticleEntry.TABLE_NAME, null, values);
-            db.close();
         }
     }
 
@@ -109,5 +124,70 @@ public class ArticleLocalDataSource {
         db.close();
 
         return result;
+    }
+
+    public List<Messages> getMsgTip() {
+        List<Messages> messages = new ArrayList<Messages>();
+        SQLiteDatabase db = myDbOpenHelper.getReadableDatabase();
+
+        String[] projection = {
+                MsgTipContract.MsgTipEntry.COLUMN_NAME_FRIEND_NAME,
+                MsgTipContract.MsgTipEntry.COLUMN_NAME_FIRST_MSG,
+                MsgTipContract.MsgTipEntry.COLUMN_NAME_TYPE,
+                MsgTipContract.MsgTipEntry.COLUMN_NAME_HEAD_URL,
+                MsgTipContract.MsgTipEntry.COLUMN_NAME_CONTENT_URL,
+                MsgTipContract.MsgTipEntry.COLUMN_NAME_AID,
+        };
+
+        Cursor c = db.query(
+                MsgTipContract.MsgTipEntry.TABLE_NAME, projection, null, null, null, null, null);
+
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
+
+                String friendName = c.getString(c.getColumnIndexOrThrow(MsgTipContract.MsgTipEntry.COLUMN_NAME_FRIEND_NAME));
+                String firstMsg = c.getString(c.getColumnIndexOrThrow(MsgTipContract.MsgTipEntry.COLUMN_NAME_FIRST_MSG));
+                int type = c.getInt(c.getColumnIndexOrThrow(MsgTipContract.MsgTipEntry.COLUMN_NAME_TYPE));
+                String headUrl = c.getString(c.getColumnIndexOrThrow(MsgTipContract.MsgTipEntry.COLUMN_NAME_HEAD_URL));
+                String contentUrl = c.getString(c.getColumnIndexOrThrow(MsgTipContract.MsgTipEntry.COLUMN_NAME_CONTENT_URL));
+                int aid = c.getInt(c.getColumnIndexOrThrow(MsgTipContract.MsgTipEntry.COLUMN_NAME_AID));
+
+                Messages message = new Messages(friendName, firstMsg, type, headUrl, contentUrl, aid);
+                messages.add(message);
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
+        db.close();
+
+        return messages;
+    }
+
+    public void deleteMsgTip(String firstMsg) {
+        SQLiteDatabase db = myDbOpenHelper.getWritableDatabase();
+
+        // 可以考虑用 id 进行删除
+        String selection = MsgTipContract.MsgTipEntry.COLUMN_NAME_FIRST_MSG + "=?";
+        String[] selectionArgs = {firstMsg};
+
+        db.delete(MsgTipContract.MsgTipEntry.TABLE_NAME, selection, selectionArgs);
+
+        db.close();
+    }
+
+    public void insertMsgTip(Messages message) {
+        SQLiteDatabase db = myDbOpenHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(MsgTipContract.MsgTipEntry.COLUMN_NAME_FRIEND_NAME, message.getFriendName());
+        values.put(MsgTipContract.MsgTipEntry.COLUMN_NAME_FIRST_MSG, message.getFirstMsg());
+        values.put(MsgTipContract.MsgTipEntry.COLUMN_NAME_TYPE, message.getType());
+        values.put(MsgTipContract.MsgTipEntry.COLUMN_NAME_HEAD_URL, message.getHeadUrl());
+        values.put(MsgTipContract.MsgTipEntry.COLUMN_NAME_CONTENT_URL, message.getContentUrl());
+        values.put(MsgTipContract.MsgTipEntry.COLUMN_NAME_AID, message.getAid());
+
+        db.insert(MsgTipContract.MsgTipEntry.TABLE_NAME, null, values);
+        db.close();
     }
 }

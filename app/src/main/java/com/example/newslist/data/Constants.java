@@ -25,6 +25,7 @@ public final class Constants {
     public static String AUTHOR_FAN_TOTAL_KEY = "user_relate_key";
     public static String LOCAL_WEBSOCKET_URL = "ws://10.0.2.2:8181";
     public static String REMOTE_WEBSOCKET_URL = "ws://116.63.152.202:8181";
-    public static final String  LOCAL_LOGIN_BASE_URL = "http://localhost:8084/updateUser";
-    public static final String  REMOTE_LOGIN_BASE_URL = "http://116.63.152.202:8084/updateUser";
+    public static final String LOCAL_LOGIN_BASE_URL = "http://localhost:8084/login";
+    public static final String REMOTE_LOGIN_BASE_URL = "http://116.63.152.202:8084/login";
+    public static final String REMOTE_REGISTER_BASE_URL = "http://116.63.152.202:8084/register";
 }
