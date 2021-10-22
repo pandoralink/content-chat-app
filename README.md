@@ -597,3 +597,4 @@ startActivityForResult(Intent intent, int requestCode) 中 requestCode 是跳转
 
 [居中显示并旋转 android Button 里的属性drawableLeft](https://blog.csdn.net/langzxz/article/details/47069235)
 [安卓Notification 推送多条只显示一条问题](https://blog.csdn.net/Jason_HD/article/details/82455471)
+[Android应用图标微技巧，8.0系统中应用图标的适配](https://blog.csdn.net/guolin_blog/article/details/79417483)
