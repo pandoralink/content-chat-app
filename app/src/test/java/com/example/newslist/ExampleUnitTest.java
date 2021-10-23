@@ -3,7 +3,6 @@ package com.example.newslist;
 import com.example.newslist.data.Constants;
 import com.example.newslist.user.User;
 import com.example.newslist.utils.Author;
-import com.example.newslist.utils.UserInfo;
 import com.google.gson.Gson;
 
 import org.junit.Test;
@@ -26,15 +25,6 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
-    }
-
-    @Test
-    public void urlTest() {
-        try {
-            System.out.println(UserInfo.appendUri("http://test.com", "id=1005"));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
 
     @Test
@@ -65,12 +55,6 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void staticTest() {
-        UserInfo.setAccount();
-        System.out.println(UserInfo.account);
-    }
-
-    @Test
     public void loginUrlTest() {
         Request request = new Request.Builder()
                 .url(Constants.LOCAL_LOGIN_BASE_URL + "?user_account=10021111&user_password=12345678")
@@ -85,16 +69,6 @@ public class ExampleUnitTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Test
-    public void methodParams() {
-        UserInfo.setAccount();
-        System.out.println(UserInfo.account);
-    }
-
-    private void test1(String a, String b) {
-
     }
 
     @Test

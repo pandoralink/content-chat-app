@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.newslist.data.Constants;
 import com.example.newslist.user.User;
-import com.example.newslist.utils.UserInfo;
 import com.example.newslist.utils.UserInfoManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -124,8 +123,6 @@ public class RegisterActivity extends AppCompatActivity {
             if (response.isSuccessful()) {
                 final String body = response.body().string();
                 User user = new Gson().fromJson(body, User.class);
-                new UserInfo(RegisterActivity.this, user);
-
                 UserInfoManager userInfoManager = new UserInfoManager(RegisterActivity.this);
                 userInfoManager.initUserInfo(user);
 
