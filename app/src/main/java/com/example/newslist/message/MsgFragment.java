@@ -2,7 +2,6 @@ package com.example.newslist.message;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newslist.R;
-import com.example.newslist.data.ArticleLocalDataSource;
+import com.example.newslist.data.local.ArticleLocalDataSource;
 import com.example.newslist.data.Constants;
 import com.example.newslist.news.ArticleContentActivity;
 import com.example.newslist.popup.DeleteMsgDialogFragment;

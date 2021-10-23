@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.newslist.Articles;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
-import com.example.newslist.data.ArticleLocalDataSource;
+import com.example.newslist.data.local.ArticleLocalDataSource;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.popup.OperationDialogFragment;
@@ -174,8 +174,7 @@ public class ArticleListFragment extends Fragment {
         swipe.setRefreshing(true);
         if (!type.equals(1)) {
             CURRENT_URL = CURRENT_URL + "?";
-        }
-        else {
+        } else {
             articlesData.clear();
         }
         Request request = new Request.Builder()

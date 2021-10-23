@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.newslist.data.Constants;
 import com.example.newslist.user.User;
-import com.example.newslist.utils.UserInfo;
 import com.example.newslist.utils.UserInfoManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -50,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String FAILURE = "failure";
     private final int MIN_PASSWORD_LENGTH = 6;
     private final int MAX_PASSWORD_LENGTH = 10;
+    private final int MIN_ACCOUNT_LENGTH = 8;
 
 
     @Override
@@ -164,6 +164,9 @@ public class LoginActivity extends AppCompatActivity {
         if (userAccount.isEmpty() || password.isEmpty()) {
             toastShowCenter(toast, "用户名或密码不能为空");
             return;
+        } else if (userAccount.length() < MIN_ACCOUNT_LENGTH) {
+            toastShowCenter(toast, "账号长度不能小于 8");
+            return;
         } else if (password.length() < MIN_PASSWORD_LENGTH) {
             toastShowCenter(toast, "密码长度不能小于 6");
             return;
@@ -194,7 +197,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (!FAILURE.equals(body)) {
                     savePw();
                     User user = new Gson().fromJson(body, User.class);
-                    new UserInfo(LoginActivity.this, user);
                     UserInfoManager userInfoManager = new UserInfoManager(LoginActivity.this);
                     userInfoManager.initUserInfo(user);
                     Intent intent = new Intent();

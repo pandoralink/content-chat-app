@@ -3,28 +3,21 @@ package com.example.newslist.user;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.newslist.LoginActivity;
 import com.example.newslist.MainActivity;
 import com.example.newslist.R;
-import com.example.newslist.user.UserInfoActivity;
 
 /**
  * @author 庞旺
@@ -54,6 +47,7 @@ public class UserFragment extends Fragment {
         Button btnLogin = rootView.findViewById(R.id.btn_user_out);
         RelativeLayout rlUserManagerIn = rootView.findViewById(R.id.rl_user_manager_in);
         RelativeLayout rlUserReadManager = rootView.findViewById(R.id.rl_user_read_manager);
+        RelativeLayout rlUserCreateManager = rootView.findViewById(R.id.rl_user_create_manager);
         tvUserName = rootView.findViewById(R.id.tv_user_page_name);
 
         initView();
@@ -74,6 +68,10 @@ public class UserFragment extends Fragment {
         rlUserReadManager.setOnClickListener(view -> {
             Log.d("PW", "onCreateView: " + "in");
             Intent intent = new Intent(getContext(), UserReadActivity.class);
+            startActivity(intent);
+        });
+        rlUserCreateManager.setOnClickListener(view -> {
+            Intent intent = new Intent(getContext(), UserCreateArticleActivity.class);
             startActivity(intent);
         });
 

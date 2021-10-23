@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -62,12 +63,15 @@ public class FriendActivity extends AppCompatActivity {
     private NewsAdapter newsAdapter;
     private List<Articles> articlesData;
     private SwipeRefreshLayout swipe;
+    OkHttpClient okHttpClient;
+    private Integer userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend);
 
+        okHttpClient = new OkHttpClient();
         Intent intent = getIntent();
         btnFollow = findViewById(R.id.btn_follow_user);
         tvAccount = findViewById(R.id.tv_account);
@@ -77,6 +81,7 @@ public class FriendActivity extends AppCompatActivity {
         String authorName = intent.getStringExtra(Constants.AUTHOR_NAME_KEY);
         String authorHeadUrl = intent.getStringExtra(Constants.AUTHOR_HEAD_URL_KEY);
         UserInfoManager userInfoManager = new UserInfoManager(this);
+        userId = userInfoManager.getUserId();
 
         userRelate = intent.getBooleanExtra(Constants.USER_RELATE_KEY, false);
         fanTotal = intent.getIntExtra(Constants.AUTHOR_FAN_TOTAL_KEY, 0);
@@ -113,9 +118,9 @@ public class FriendActivity extends AppCompatActivity {
         btnFollow.setOnClickListener(view -> {
             userRelate = !userRelate;
             if (userRelate) {
-                btnFollow.setText("√已关注");
+                cancelFollow();
             } else {
-                btnFollow.setText("+关注");
+                follow();
             }
         });
         // 私信按钮
@@ -146,19 +151,16 @@ public class FriendActivity extends AppCompatActivity {
                 throws IOException {
             if (response.isSuccessful()) {
                 final String body = response.body().string();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Gson gson = new Gson();
-                        Type jsonType = new TypeToken<BaseResponse<List<Articles>>>() {
-                        }.getType();
-                        BaseResponse<List<Articles>> newsListResponse = gson.fromJson(body, jsonType);
-                        for (Articles articles : newsListResponse.getData()) {
-                            newsAdapter.add(articles);
-                        }
-                        newsAdapter.notifyDataSetChanged();
-                        swipe.setRefreshing(false);
+                runOnUiThread(() -> {
+                    Gson gson = new Gson();
+                    Type jsonType = new TypeToken<BaseResponse<List<Articles>>>() {
+                    }.getType();
+                    BaseResponse<List<Articles>> newsListResponse = gson.fromJson(body, jsonType);
+                    for (Articles articles : newsListResponse.getData()) {
+                        newsAdapter.add(articles);
                     }
+                    newsAdapter.notifyDataSetChanged();
+                    swipe.setRefreshing(false);
                 });
             } else {
             }
@@ -177,16 +179,6 @@ public class FriendActivity extends AppCompatActivity {
         newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
-                OperationDialogFragment operationDialogFragment = new OperationDialogFragment();
-                operationDialogFragment.articleUrl = articlesData.get(position).getArticle();
-                operationDialogFragment.itemIndex = position;
-                operationDialogFragment.setOnNotLikeClickListener(new OperationDialogFragment.OnNotLikeClickListener() {
-                    @Override
-                    public void onClick(int position) {
-                        articlesData.remove(position);
-                        newsAdapter.notifyDataSetChanged();
-                    }
-                });
             }
 
             @Override
@@ -227,7 +219,7 @@ public class FriendActivity extends AppCompatActivity {
                 .url(Constants.BACK_BASE_URL + "getUserAccount?uid=" + uid)
                 .get().build();
         try {
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = okHttpClient;
             client.newCall(request).enqueue(new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -266,7 +258,7 @@ public class FriendActivity extends AppCompatActivity {
                     .url(Constants.ARTICLE_AUTHOR_INFO_BASE_URL + "?blogger_id=" + authorId + "&fan_id=" + userId)
                     .get().build();
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = okHttpClient;
                 client.newCall(request).enqueue(new okhttp3.Callback() {
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -300,5 +292,53 @@ public class FriendActivity extends AppCompatActivity {
                 ex.printStackTrace();
             }
         }
+    }
+
+    private void follow() {
+        String url = Constants.BACK_BASE_URL + "addFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
+        final Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: ");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        userRelate = true;
+                        btnFollow.setText("√已关注");
+                    });
+                }
+            }
+        });
+    }
+
+    private void cancelFollow() {
+        String url = Constants.BACK_BASE_URL + "cancelFollow" + "?fan_id=" + userId + "&blogger_id=" + authorId;
+        final Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: ");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        userRelate = false;
+                        btnFollow.setText("+关注");
+                    });
+                }
+            }
+        });
     }
 }

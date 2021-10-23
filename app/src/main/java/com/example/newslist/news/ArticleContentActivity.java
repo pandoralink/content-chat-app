@@ -120,6 +120,7 @@ public class ArticleContentActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JsToUserPage(this), "JsToUserPage");
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        Log.d(TAG, "initView: " + articleUrl);
         webView.loadUrl(articleUrl);
     }
 
@@ -300,7 +301,7 @@ public class ArticleContentActivity extends AppCompatActivity {
                     .url(Constants.ARTICLE_AUTHOR_INFO_BASE_URL + "?blogger_id=" + authorId + "&fan_id=" + userId)
                     .get().build();
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = okHttpClient;
                 client.newCall(request).enqueue(callback);
             } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
@@ -320,21 +321,17 @@ public class ArticleContentActivity extends AppCompatActivity {
                     }.getType();
                     BaseResponse<AuthorInfoRequest> authorInfoResponse = gson.fromJson(body, jsonType);
                     AuthorInfoRequest authorInfoRequest = (AuthorInfoRequest) authorInfoResponse.getData();
-                    userRelate = authorInfoRequest.getAuthorRelate();
+                    userRelate = (Boolean) authorInfoRequest.getAuthorRelate();
                     int total = authorInfoRequest.getFanTotal();
-                    ivAuthorHead.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Log.d(TAG, "onClick: " + "in");
-                            Intent intent = new Intent(getApplicationContext(), FriendActivity.class);
-                            intent.putExtra(Constants.AUTHOR_NAME_KEY, authorName);
-                            intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, authorHeadUrl);
-                            intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, authorAccount);
-                            intent.putExtra(Constants.USER_RELATE_KEY, userRelate);
-                            intent.putExtra(Constants.AUTHOR_FAN_TOTAL_KEY, total);
-                            intent.putExtra("authorId", authorId);
-                            startActivity(intent);
-                        }
+                    ivAuthorHead.setOnClickListener(view -> {
+                        Intent intent = new Intent(getApplicationContext(), FriendActivity.class);
+                        intent.putExtra(Constants.AUTHOR_NAME_KEY, authorName);
+                        intent.putExtra(Constants.AUTHOR_HEAD_URL_KEY, authorHeadUrl);
+                        intent.putExtra(Constants.AUTHOR_ACCOUNT_KEY, authorAccount);
+                        intent.putExtra(Constants.USER_RELATE_KEY, userRelate);
+                        intent.putExtra(Constants.AUTHOR_FAN_TOTAL_KEY, total);
+                        intent.putExtra("authorId", authorId);
+                        startActivity(intent);
                     });
                     if (userRelate) {
                         btnFollow.setText("√已关注");

@@ -15,12 +15,10 @@ import android.widget.ImageView;
 import com.example.newslist.Articles;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
-import com.example.newslist.data.ArticleLocalDataSource;
+import com.example.newslist.data.local.ArticleLocalDataSource;
 import com.example.newslist.data.Constants;
 import com.example.newslist.news.ArticleContentActivity;
-import com.example.newslist.popup.DeleteMsgDialogFragment;
 import com.example.newslist.popup.MyDialogFragment;
-import com.example.newslist.popup.OperationDialogFragment;
 import com.example.newslist.utils.UserInfoManager;
 
 import java.util.ArrayList;

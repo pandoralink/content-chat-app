@@ -106,7 +106,7 @@ public class UserInfoManager {
         return mContext.getSharedPreferences(spFileName, Context.MODE_PRIVATE).getInt(userIdKey, 0);
     }
 
-    private String getUserName() {
+    public String getUserName() {
         return mContext.getSharedPreferences(spFileName, Context.MODE_PRIVATE).getString(userNameKey, null);
     }
 

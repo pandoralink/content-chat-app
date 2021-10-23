@@ -1,4 +1,4 @@
-package com.example.newslist.data;
+package com.example.newslist.data.local;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -11,8 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.example.newslist.Articles;
 import com.example.newslist.message.Messages;
-
-import org.junit.Test;
+import com.example.newslist.message.core.Msg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +103,7 @@ public class ArticleLocalDataSource {
             values.put(ArticleContract.ArticleEntry.COLUMN_NAME_AUTHORHEADURL, article.getAuthorHeadUrl());
 
             db.insert(ArticleContract.ArticleEntry.TABLE_NAME, null, values);
+            db.close();
         }
     }
 
@@ -189,5 +189,30 @@ public class ArticleLocalDataSource {
 
         db.insert(MsgTipContract.MsgTipEntry.TABLE_NAME, null, values);
         db.close();
+    }
+
+    public List<Msg> getMsgList(String userName) {
+        List<Msg> msgs = new ArrayList<Msg>();
+        SQLiteDatabase db = myDbOpenHelper.getReadableDatabase();
+        String sql = "select msg_content,msg_date,msg_type from Chat where friend_name=?";
+
+        Cursor cursor = db.rawQuery(sql, new String[]{userName});
+        while (cursor.moveToNext()) {
+            String msg_content = cursor.getString(cursor.getColumnIndex("msg_content"));
+            String msg_date = cursor.getString(cursor.getColumnIndex("msg_date"));
+            int msg_type = cursor.getInt(cursor.getColumnIndex("msg_type"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(msg_date).append("\n" + msg_content);
+            Log.d("sql语句", sql);
+            Log.d("获取本地数据库中“我”和" + userName + "的聊天记录", msg_content + " " + msg_date + " " + msg_type);
+            Msg msg = new Msg(sb.toString(), msg_type);
+            msgs.add(msg);
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+
+        return msgs;
     }
 }

@@ -1,9 +1,6 @@
-package com.example.newslist.data;
+package com.example.newslist.data.local;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -30,13 +27,22 @@ public class MyDbOpenHelper extends SQLiteOpenHelper {
                     MsgTipContract.MsgTipEntry.COLUMN_NAME_CONTENT_URL + " VARCHAR(100), " +
                     MsgTipContract.MsgTipEntry.COLUMN_NAME_AID + " INT " +
                     ")";
+//    private static final String SQL_CREATE_ENTRIES_3 =
+//            "CREATE TABLE Chat (id INTEGER PRIMARY KEY," +
+//                    "user_name varchar(64), " +
+//                    "friend_name varchar(64), " +
+//                    "msg_content varchar(256), " +
+//                    "msg_date varchar(64), " +
+//                    "msg_type integer);";
 
     private static final String SQL_DELETE_ENTRIES_1 =
             "DROP TABLE IF EXISTS " + ArticleContract.ArticleEntry.TABLE_NAME;
     private static final String SQL_DELETE_ENTRIES_2 =
             "DROP TABLE IF EXISTS " + MsgTipContract.MsgTipEntry.TABLE_NAME;
+//    private static final String SQL_DELETE_ENTRIES_3 =
+//            "DROP TABLE IF EXISTS " + "Chat";
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "article.db";
 
     private Context mContext;
@@ -50,12 +56,14 @@ public class MyDbOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_ENTRIES_1);
         sqLiteDatabase.execSQL(SQL_CREATE_ENTRIES_2);
+//        sqLiteDatabase.execSQL(SQL_CREATE_ENTRIES_3);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DELETE_ENTRIES_1);
         db.execSQL(SQL_DELETE_ENTRIES_2);
+//        db.execSQL(SQL_CREATE_ENTRIES_3);
         onCreate(db);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.newslist.createNew;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.newslist.R;
 import com.example.newslist.data.Constants;
+import com.example.newslist.utils.UserInfoManager;
 
 /**
  * @author 庞旺
@@ -18,13 +20,17 @@ import com.example.newslist.data.Constants;
 public class CreateNewFragment extends Fragment {
     View rootView;
 
+    public CreateNewFragment() {
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_create_new, container, false);
         }
-        String url = Constants.SERVER_URL;
+        String url = handleUrl();
         WebView webView = rootView.findViewById(R.id.wv_edit);
         webView.setWebViewClient(new WebViewClient() {
             //设置在webView点击打开的新网页在当前界面显示,而不跳转到新的浏览器中
@@ -51,4 +57,13 @@ public class CreateNewFragment extends Fragment {
         }
     }
 
+    private String handleUrl() {
+        String url = Constants.SERVER_URL;
+
+        UserInfoManager userInfoManager = new UserInfoManager(getContext());
+        url += "?uid=" + userInfoManager.getUserId();
+        Log.d("PWT", "handleUrl: " + url);
+
+        return url;
+    }
 }

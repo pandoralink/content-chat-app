@@ -1,19 +1,27 @@
 package com.example.newslist;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.NetworkOnMainThreadException;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
@@ -23,17 +31,28 @@ import com.example.newslist.createNew.CreateNewFragment;
 import com.example.newslist.data.Constants;
 import com.example.newslist.data.MsgTip;
 import com.example.newslist.message.Messages;
+import com.example.newslist.message.MsgContentActivity;
 import com.example.newslist.message.MsgFragment;
+import com.example.newslist.message.core.ListSQLiteHelper;
+import com.example.newslist.message.core.Msg;
+import com.example.newslist.message.core.MySQLiteHelper;
 import com.example.newslist.news.ArticleFragment;
 import com.example.newslist.user.UserFragment;
+import com.example.newslist.utils.UserInfoManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,14 +84,46 @@ public class MainActivity extends AppCompatActivity {
      */
     public static WebSocket mWebSocket;
 
+    /* 分割线 */
+    private Socket socketSend;
+    private String ip = "172.20.10.2";
+    private String port = "6666";
+    DataInputStream in;
+    DataOutputStream out;
+    private String myName = "我";
+    private String recMsg;
+    private String recId1;
+    private String recId2;
+    private String recName;
+    private String recContent;
+    private String strStart = "(";
+    private String strMidStart = ",";
+    private String strMidEnd = ";";
+    private String strEnd = ")";
+    public static String friendName;
+    public static int friendId;
+    public static String content;
+    boolean isRunning = false;
+    public static boolean isSend = false;
+    MySQLiteHelper openHelper;
+    ListSQLiteHelper listSQLiteHelper;
+    UserInfoManager userInfoManager;
+    public static int position = 0;
+
+    String table = "ChatList";
+    String[] columns = new String[]{"friend_name", "friend_id"};
+    String selection = "friend_id=?";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: " + "再次创建MainActivity");
         setContentView(R.layout.activity_main);
         defaultPage = getIntent().getIntExtra("fragmentIndex", 0);
+
         initViews();
         initWebSocket();
+        startThread();
     }
 
     @Override
@@ -239,5 +290,192 @@ public class MainActivity extends AppCompatActivity {
         messages.setContentUrl(contentUrl);
         messages.setAid(aid);
         msgFragment.addTip(messages);
+    }
+
+    private void startThread() {
+        initDB();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if ((socketSend = new Socket(ip, Integer.parseInt(port))) == null) {
+                        Log.d("SSS", "Socket失败");
+                    } else {
+                        isRunning = true;
+                        Log.d("SSS", "即将开启线程");
+                        in = new DataInputStream(socketSend.getInputStream());
+                        out = new DataOutputStream(socketSend.getOutputStream());
+//                        out.writeUTF(String.valueOf(userId));//使用用户id辨别身份
+                        new Thread(new MainActivity.receive(), "接收线程").start();
+                        new Thread(new MainActivity.send(), "发送线程").start();
+                    }
+                } catch (Exception e) {
+                    isRunning = false;
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(MainActivity.this, "连接服务器失败！！！", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                    try {
+                        socketSend.close();
+                        socketSend = null;
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    finish();
+                }
+            }
+        }).start();
+    }
+
+    /* 分割线 */
+    //获取当前进程的Looper对象传给handler
+    private Handler handler = new Handler(Looper.myLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {//?
+            Log.d("handler", "handler");
+            if (!recContent.isEmpty()) {
+                addNewMessage(recContent, Msg.TYPE_RECEIVED);//添加新数据
+            }
+        }
+    };
+
+    public void addNewMessage(String msg, int type) {
+        @SuppressLint("SimpleDateFormat")
+        String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
+        StringBuilder sb = new StringBuilder();
+        sb.append(date).append("\n" + msg);
+        msg = sb.toString();
+        Msg message = new Msg(msg, type);
+        MsgContentActivity.msgList.add(message);
+        MsgContentActivity.adapter.notifyItemInserted(MsgContentActivity.msgList.size() - 1);
+        MsgContentActivity.msgRecyclerView.scrollToPosition(MsgContentActivity.msgList.size() - 1);
+        sb.delete(0, sb.length());
+    }
+
+    private void initDB() {
+        openHelper = new MySQLiteHelper(this, "chat.db", null, 1);
+        listSQLiteHelper = new ListSQLiteHelper(this, "chat.db", null, 1);
+    }
+
+    class receive implements Runnable {
+        @Override
+        public void run() {
+            recMsg = "";
+            recId1 = "";
+            recId2 = "";
+            recName = "";
+            recContent = "";
+            while (isRunning) {
+                Log.d("所在位置", String.valueOf(position));
+                try {
+                    recMsg = in.readUTF();
+                    recId1 = recMsg.substring(recMsg.indexOf(strMidStart) + 1, recMsg.indexOf(strMidEnd));
+                    recId2 = recMsg.substring(recMsg.indexOf(strMidEnd) + 1, recMsg.lastIndexOf(strEnd));
+                    recName = recMsg.substring(recMsg.indexOf(strStart) + 1, recMsg.lastIndexOf(strMidStart));
+                    recContent = recMsg.substring(0, recMsg.indexOf(strStart));
+                    Log.d("信息组成", recMsg);
+                    Log.d("Id", String.valueOf(userInfoManager.getUserId()));
+                    if (Integer.valueOf(recId2).equals(userInfoManager.getUserId())) {
+                        Log.d("RRR", "收到了一条消息" + "recMsg: " + recMsg);
+
+                        Log.d("friendName", recName);
+
+                        @SuppressLint("SimpleDateFormat")
+                        String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
+
+                        ContentValues con = new ContentValues();
+                        con.put("user_name", myName);
+                        con.put("friend_name", recName);
+                        con.put("msg_content", recContent);
+                        con.put("msg_date", date);
+                        con.put("msg_type", 0);
+
+                        SQLiteDatabase db = openHelper.getReadableDatabase();
+                        ContentValues values = new ContentValues();
+                        values.put("user_name", myName);
+                        values.put("friend_name", recName);
+                        values.put("msg_content", recContent);
+                        values.put("msg_date", date);
+                        values.put("msg_type", 0);
+                        db.insert("Chat", null, values);
+                        db.close();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (!TextUtils.isEmpty(recContent) && Integer.valueOf(recId2).equals(userInfoManager.getUserId()) && position == 0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Messages messages = new Messages();
+                            messages.setFirstMsg(recContent);
+                            messages.setFriendName(recName);
+                            messages.setUserId(Integer.valueOf(recId1));
+                            msgFragment.addTip(messages);
+                        }
+                    });
+
+                } else if (!TextUtils.isEmpty(recContent) && Integer.valueOf(recId2).equals(userInfoManager.getUserId()) && position == 1) {
+                    Log.d("RRR", "inputStream:" + in);
+                    Message message = new Message();
+                    message.obj = recContent;
+                    handler.sendMessage(message);
+                }
+            }
+        }
+    }
+
+    public static void setConfigure(String content1, String otherName, int authorId, boolean state) {
+        content = content1;
+        friendName = otherName;
+        friendId = authorId;
+        isSend = state;
+    }
+
+    public static void setPosition(int position1) {
+        position = position1;
+    }
+
+    class send implements Runnable {
+        @Override
+        public void run() {
+            while (isRunning) {
+                if (!"".equals(content) && isSend) {
+                    Log.d("A", "发送了一条消息：" + content);
+                    @SuppressLint("SimpleDateFormat")
+                    String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
+
+                    //将发送的消息存入本地
+                    ContentValues con = new ContentValues();
+                    con.put("user_name", myName);
+                    con.put("friend_name", friendName);
+                    con.put("msg_content", content);
+                    con.put("msg_date", date);
+                    con.put("msg_type", 1);
+                    //保存到本地SQLite
+                    Log.d("CtrlS", "将发送给" + friendName + "的消息存入本地");
+                    SQLiteDatabase db = openHelper.getReadableDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put("user_name", myName);
+                    values.put("friend_name", friendName);
+                    values.put("msg_content", content);
+                    values.put("msg_date", date);
+                    values.put("msg_type", 1);
+                    db.insert("Chat", null, values);
+                    db.close();
+
+                    try {
+                        String Msg = content + "(" + userInfoManager.getUserName() + "," + userInfoManager.getUserId() + ";" + friendId + ")";
+                        Log.d("发出的消息", Msg);
+                        out.writeUTF(Msg);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    isSend = false;
+                }
+            }
+        }
     }
 }

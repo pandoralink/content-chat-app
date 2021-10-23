@@ -58,27 +58,17 @@
             android:background="@drawable/tab_bar_border"
             android:padding="10dp">
 
-            <ImageView
-                android:id="@+id/msg_voice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-
-                android:src="@drawable/msg_voice" />
-
             <EditText
                 android:id="@+id/et_msg_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@id/msg_send_btn"
-                android:layout_toRightOf="@id/msg_voice"
                 android:background="@drawable/circle_msg_edit"
                 android:gravity="left|top"
                 android:hint="发送消息..."
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
                 android:minLines="1"
                 android:paddingLeft="20dp"
                 android:paddingTop="8dp"

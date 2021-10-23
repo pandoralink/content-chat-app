@@ -22,7 +22,7 @@ public final class Constants {
     public static String AUTHOR_HEAD_URL_KEY = "author_head_url_key";
     public static String AUTHOR_ACCOUNT_KEY = "author_account_key";
     public static String USER_RELATE_KEY = "user_relate_key";
-    public static String AUTHOR_FAN_TOTAL_KEY = "user_relate_key";
+    public static String AUTHOR_FAN_TOTAL_KEY = "author_fan_total_key";
     public static String LOCAL_WEBSOCKET_URL = "ws://10.0.2.2:8181";
     public static String REMOTE_WEBSOCKET_URL = "ws://116.63.152.202:8181";
     public static final String LOCAL_LOGIN_BASE_URL = "http://localhost:8084/login";

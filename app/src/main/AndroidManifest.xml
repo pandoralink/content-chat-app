@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsList">
-        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".createNew.CreateArticleActivity"></activity>
+        <activity android:name=".user.UserCreateArticleActivity" />
+        <activity android:name=".RegisterActivity" />
         <activity android:name=".user.UserReadActivity" />
         <activity android:name=".user.UserInfoActivity" />
         <activity android:name=".user.FriendActivity" />

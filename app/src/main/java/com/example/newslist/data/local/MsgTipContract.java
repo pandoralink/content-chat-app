@@ -1,4 +1,4 @@
-package com.example.newslist.data;
+package com.example.newslist.data.local;
 
 import android.provider.BaseColumns;
 
