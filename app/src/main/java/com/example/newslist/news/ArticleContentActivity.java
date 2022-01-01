@@ -120,7 +120,7 @@ public class ArticleContentActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JsToUserPage(this), "JsToUserPage");
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        Log.d(TAG, "initView: " + articleUrl);
+        Log.d(TAG, "文章加载链接" + articleUrl);
         webView.loadUrl(articleUrl);
     }
 
@@ -223,6 +223,7 @@ public class ArticleContentActivity extends AppCompatActivity {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     final String body = response.body().string();
                     if (response.isSuccessful()) {
+                        Log.d(TAG, "onResponse: " + body);
                         Gson gson = new Gson();
                         Article article = gson.fromJson(body, Article.class);
                         authorId = article.getNewOwnerId();

@@ -15,17 +15,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Chat (id INTEGER PRIMARY KEY,"+
-                "user_name varchar(64), "+
-                "friend_name varchar(64), "+
+        db.execSQL("CREATE TABLE Chat (id INTEGER PRIMARY KEY," +
+                "user_name varchar(64), " +
+                "friend_name varchar(64), " +
                 "msg_content varchar(256), " +
-                "msg_date varchar(64), "+
+                "msg_date varchar(64), " +
                 "msg_type integer);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS Chat");
+        onCreate(db);
     }
 
 }

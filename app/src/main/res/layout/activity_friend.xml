@@ -44,7 +44,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/iv_author_head"
-            android:layout_alignParentRight="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_toRightOf="@id/iv_author_head"
@@ -85,20 +84,19 @@
             android:layout_alignParentBottom="true"
             android:background="@android:color/transparent" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:gravity="right"
-            android:orientation="vertical">
+            android:layout_toRightOf="@id/tv_user_name">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_dm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
                 android:backgroundTint="@color/selectState"
                 android:text="私信"
                 android:textSize="20sp"
@@ -108,11 +106,13 @@
                 android:id="@+id/btn_follow_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/btn_dm"
+                android:layout_alignParentRight="true"
                 android:backgroundTint="@color/selectState"
-                android:text="✔已关注"
+                android:text="+关注"
                 android:textSize="20sp"
                 app:cornerRadius="15dp" />
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 

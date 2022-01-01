@@ -215,4 +215,16 @@ public class ArticleLocalDataSource {
 
         return msgs;
     }
+
+    /**
+     * 删库跑路
+     */
+    public void clearAll() {
+        SQLiteDatabase db = myDbOpenHelper.getWritableDatabase();
+
+        db.execSQL("delete from " + MsgTipContract.MsgTipEntry.TABLE_NAME);
+        db.execSQL("delete from " + ArticleContract.ArticleEntry.TABLE_NAME);
+
+        db.close();
+    }
 }

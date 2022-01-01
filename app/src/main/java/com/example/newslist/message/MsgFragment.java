@@ -11,9 +11,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.newslist.MainActivity;
 import com.example.newslist.R;
 import com.example.newslist.data.local.ArticleLocalDataSource;
 import com.example.newslist.data.Constants;
+import com.example.newslist.message.core.ListSQLiteHelper;
 import com.example.newslist.news.ArticleContentActivity;
 import com.example.newslist.popup.DeleteMsgDialogFragment;
 
@@ -27,13 +29,14 @@ import java.util.List;
 public class MsgFragment extends Fragment {
     private static final String TAG = "PW";
     View rootView;
-    private List<Messages> messagesData;
+    public List<Messages> messagesData;
     private MessagesAdapter messagesAdapter;
     private RecyclerView rvMessagesList;
     private String[] friendNames = null;
     private String[] firstMsgs = null;
     private int[] userIds = null;
     private static final String CHANNEL_ID = "comment channel";
+    ListSQLiteHelper listSQLiteHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +48,7 @@ public class MsgFragment extends Fragment {
         rvMessagesList = rootView.findViewById(R.id.rv_msg_list);
 
         initData();
+        listSQLiteHelper = new ListSQLiteHelper(getContext());
 
         messagesAdapter = new MessagesAdapter(getContext(), R.layout.list_msg_item, messagesData);
         messagesAdapter.setOnItemClickListener(new MessagesAdapter.OnItemClickListener() {
@@ -52,6 +56,10 @@ public class MsgFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 if (messagesData.get(position).getType() == 1) {
                     Intent intent = new Intent(getActivity(), MsgContentActivity.class);
+                    //将好友名字传入聊天界面，便于聊天信息的保存
+                    intent.putExtra("friendName", messagesData.get(position).getFriendName());
+                    intent.putExtra("authorId", messagesData.get(position).getUserId());
+                    MainActivity.setPosition(1);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(getActivity(), ArticleContentActivity.class);
@@ -151,5 +159,10 @@ public class MsgFragment extends Fragment {
 
     private List<Messages> getLocalMsgTipCache() {
         return ArticleLocalDataSource.getInstance(getContext()).getMsgTip();
+    }
+
+    public void updateMsgList(int position, Messages messages) {
+        messagesData.set(position, messages);
+        messagesAdapter.notifyDataSetChanged();
     }
 }

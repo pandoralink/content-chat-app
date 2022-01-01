@@ -16,12 +16,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newslist.Articles;
+import com.example.newslist.MainActivity;
 import com.example.newslist.NewsAdapter;
 import com.example.newslist.R;
 import com.example.newslist.data.Article;
 import com.example.newslist.data.BaseResponse;
 import com.example.newslist.data.Constants;
 import com.example.newslist.message.MsgContentActivity;
+import com.example.newslist.message.core.ListSQLiteHelper;
+import com.example.newslist.message.core.MySQLiteHelper;
 import com.example.newslist.news.ArticleContentActivity;
 import com.example.newslist.news.AuthorInfoRequest;
 import com.example.newslist.popup.OperationDialogFragment;
@@ -65,6 +68,13 @@ public class FriendActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipe;
     OkHttpClient okHttpClient;
     private Integer userId;
+    MySQLiteHelper openHelper;
+    ListSQLiteHelper listSQLiteHelper;
+
+    private void initDB() {
+        openHelper = new MySQLiteHelper(this, "chat.db", null, 1);
+        listSQLiteHelper = new ListSQLiteHelper(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,8 +136,13 @@ public class FriendActivity extends AppCompatActivity {
         // 私信按钮
         Button btnDm = findViewById(R.id.btn_dm);
         btnDm.setOnClickListener(view -> {
-            Intent intent1 = new Intent(getApplicationContext(), MsgContentActivity.class);
-            startActivity(intent1);
+            Intent intentToMsgContent = new Intent(getApplicationContext(), MsgContentActivity.class);
+            intentToMsgContent.putExtra("friendName", authorName);
+            intentToMsgContent.putExtra("authorId", authorId);
+            intentToMsgContent.putExtra("authorHeadUrl", authorHeadUrl);
+            startActivity(intentToMsgContent);
+
+            MainActivity.setPosition(1);
         });
         ImageView ivFriendOut = findViewById(R.id.iv_friend_out);
         ivFriendOut.setOnClickListener(view -> finish());
@@ -143,6 +158,8 @@ public class FriendActivity extends AppCompatActivity {
                 refreshData();
             }
         });
+
+        initDB();
     }
 
     private okhttp3.Callback callback = new okhttp3.Callback() {
@@ -205,8 +222,10 @@ public class FriendActivity extends AppCompatActivity {
                 .url(Constants.USER_ARTICLE_URL + "?userAccount=" + userAccount)
                 .get().build();
         try {
-            articlesData.clear();
-            newsAdapter.notifyDataSetChanged();
+            runOnUiThread(() -> {
+                articlesData.clear();
+                newsAdapter.notifyDataSetChanged();
+            });
             OkHttpClient client = new OkHttpClient();
             client.newCall(request).enqueue(callback);
         } catch (NetworkOnMainThreadException ex) {

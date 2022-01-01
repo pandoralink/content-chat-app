@@ -37,6 +37,7 @@ import com.example.newslist.message.core.ListSQLiteHelper;
 import com.example.newslist.message.core.Msg;
 import com.example.newslist.message.core.MySQLiteHelper;
 import com.example.newslist.news.ArticleFragment;
+import com.example.newslist.user.User;
 import com.example.newslist.user.UserFragment;
 import com.example.newslist.utils.UserInfoManager;
 import com.google.gson.Gson;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String CHANNEL_ID = "Comment Channel";
     private static int defaultPage = 0;
     Gson gson = new Gson();
-    MsgFragment msgFragment;
+    public static MsgFragment msgFragment;
     /**
      * num: 通知/提醒数量
      */
@@ -83,10 +84,13 @@ public class MainActivity extends AppCompatActivity {
      * 但我还没有遇见
      */
     public static WebSocket mWebSocket;
+    UserInfoManager userInfoManager;
+    private int currentUserId;
 
     /* 分割线 */
     private Socket socketSend;
-    private String ip = "172.20.10.2";
+        private String ip = "122.9.150.124";
+//    private String ip = "192.168.43.145";
     private String port = "6666";
     DataInputStream in;
     DataOutputStream out;
@@ -107,8 +111,9 @@ public class MainActivity extends AppCompatActivity {
     public static boolean isSend = false;
     MySQLiteHelper openHelper;
     ListSQLiteHelper listSQLiteHelper;
-    UserInfoManager userInfoManager;
     public static int position = 0;
+    public static int position1;
+    public static int position2;
 
     String table = "ChatList";
     String[] columns = new String[]{"friend_name", "friend_id"};
@@ -120,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         defaultPage = getIntent().getIntExtra("fragmentIndex", 0);
+        userInfoManager = new UserInfoManager(this);
+        currentUserId = userInfoManager.getUserId();
 
         initViews();
         initWebSocket();
@@ -238,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void initWebSocket() {
-        String wsUrl = Constants.REMOTE_WEBSOCKET_URL + "/?id=1005";
+        String wsUrl = Constants.REMOTE_WEBSOCKET_URL + "/?id=" + currentUserId;
         //构造request对象
         Request request = new Request.Builder()
                 .url(wsUrl)
@@ -354,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initDB() {
         openHelper = new MySQLiteHelper(this, "chat.db", null, 1);
-        listSQLiteHelper = new ListSQLiteHelper(this, "chat.db", null, 1);
+        listSQLiteHelper = new ListSQLiteHelper(this);
     }
 
     class receive implements Runnable {
@@ -374,7 +381,6 @@ public class MainActivity extends AppCompatActivity {
                     recName = recMsg.substring(recMsg.indexOf(strStart) + 1, recMsg.lastIndexOf(strMidStart));
                     recContent = recMsg.substring(0, recMsg.indexOf(strStart));
                     Log.d("信息组成", recMsg);
-                    Log.d("Id", String.valueOf(userInfoManager.getUserId()));
                     if (Integer.valueOf(recId2).equals(userInfoManager.getUserId())) {
                         Log.d("RRR", "收到了一条消息" + "recMsg: " + recMsg);
 
@@ -382,14 +388,15 @@ public class MainActivity extends AppCompatActivity {
 
                         @SuppressLint("SimpleDateFormat")
                         String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
-
+                        //将收到的消息存入本地
                         ContentValues con = new ContentValues();
                         con.put("user_name", myName);
                         con.put("friend_name", recName);
                         con.put("msg_content", recContent);
                         con.put("msg_date", date);
                         con.put("msg_type", 0);
-
+                        //保存到本地SQLite
+                        Log.d("CtrlS", "将收到的" + recName + "的消息存入本地");
                         SQLiteDatabase db = openHelper.getReadableDatabase();
                         ContentValues values = new ContentValues();
                         values.put("user_name", myName);
@@ -405,24 +412,75 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                if (!TextUtils.isEmpty(recContent) && Integer.valueOf(recId2).equals(userInfoManager.getUserId()) && position == 0) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Messages messages = new Messages();
-                            messages.setFirstMsg(recContent);
-                            messages.setFriendName(recName);
-                            messages.setUserId(Integer.valueOf(recId1));
-                            msgFragment.addTip(messages);
+                runOnUiThread(() -> {
+                    MsgFragment msgFragment = MainActivity.msgFragment;
+                    Boolean flag = true;
+                    for (Messages message : msgFragment.messagesData) {
+                        if (Integer.valueOf(recId1).equals(message.getUserId())) {
+                            flag = false;
+                            if (MsgContentActivity.getInstance() != null) {
+                                Msg msg = new Msg(recContent, Msg.TYPE_RECEIVED);
+                                MsgContentActivity.getInstance().updateMsgList(msg);
+                            }
                         }
-                    });
+                    }
+                    if (flag) {
+                        Messages messages = new Messages();
+                        messages.setFirstMsg(recContent);
+                        messages.setFriendName(recName);
+                        messages.setUserId(Integer.valueOf(recId1));
+                        msgFragment.addTip(messages);
+                    }
+                });
 
-                } else if (!TextUtils.isEmpty(recContent) && Integer.valueOf(recId2).equals(userInfoManager.getUserId()) && position == 1) {
-                    Log.d("RRR", "inputStream:" + in);
-                    Message message = new Message();
-                    message.obj = recContent;
-                    handler.sendMessage(message);
-                }
+//                if (listSQLiteHelper.getReadableDatabase().query("ChatList", new String[]{"friend_id", "friend_name"}, "friend_id=?", new String[]{recId1}, null, null, null).getCount() <= 0) {
+//                    listSQLiteHelper.getReadableDatabase().close();
+//                    if (!TextUtils.isEmpty(recContent) && Integer.valueOf(recId2).equals(userInfoManager.getUserId()) && position == 0) {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                MsgFragment msgFragment = MainActivity.msgFragment;
+//                                Messages messages = new Messages();
+//                                messages.setFirstMsg(recContent);
+//                                messages.setFriendName(recName);
+//                                messages.setUserId(Integer.valueOf(recId1));
+//                                msgFragment.addTip(messages);
+//
+//                                position2 = msgFragment.messagesData.indexOf(messages);
+//                                Log.d("消息框在数组中的位置", String.valueOf(position2));
+//                            }
+//                        });
+//
+//                        ContentValues con = new ContentValues();
+//                        con.put("friend_name", recName);
+//                        con.put("friend_id", Integer.valueOf(recId1));
+//                        Log.d("CtrlS", "将消息列表中的新信息框存入本地");
+//                        SQLiteDatabase db = listSQLiteHelper.getReadableDatabase();
+//                        ContentValues values = new ContentValues();
+//                        values.put("friend_name", recName);
+//                        values.put("friend_id", Integer.valueOf(recId1));
+//                        db.insert("ChatList", null, values);
+//                        db.close();
+//
+//                    } else if (!TextUtils.isEmpty(recContent) && Integer.valueOf(recId2).equals(userInfoManager.getUserId()) && position == 1) {
+//                        Log.d("RRR", "inputStream:" + in);
+//                        Message message = new Message();
+//                        message.obj = recContent;
+//                        handler.sendMessage(message);
+//                    }
+//                } else {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            MsgFragment msgFragment = MainActivity.msgFragment;
+//                            Messages messages = new Messages();
+//                            messages.setFirstMsg(recContent);
+//                            messages.setFriendName(recName);
+//                            messages.setUserId(Integer.valueOf(recId1));
+//                            msgFragment.updateMsgList(position, messages);
+//                        }
+//                    });
+//                }
             }
         }
     }

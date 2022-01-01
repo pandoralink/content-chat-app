@@ -1,6 +1,9 @@
 package com.example.newslist.message;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +23,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.newslist.MainActivity;
 import com.example.newslist.R;
 import com.example.newslist.data.local.ArticleLocalDataSource;
+import com.example.newslist.data.local.MsgLocalDataSource;
 import com.example.newslist.message.core.ItemAdapter;
+import com.example.newslist.message.core.ListSQLiteHelper;
 import com.example.newslist.message.core.Msg;
 import com.example.newslist.message.core.MySQLiteHelper;
 import com.example.newslist.utils.UserInfoManager;
@@ -36,7 +41,7 @@ import java.util.List;
 /**
  * @author 庞旺
  */
-public class MsgContentActivity extends AppCompatActivity implements View.OnClickListener {
+public class MsgContentActivity extends AppCompatActivity {
 
     public static List<Msg> msgList = new ArrayList<>();
     public static RecyclerView msgRecyclerView;
@@ -60,33 +65,22 @@ public class MsgContentActivity extends AppCompatActivity implements View.OnClic
     MySQLiteHelper openHelper;
     UserInfoManager userInfoManager;
     public static int readStatus = 0;
+    ListSQLiteHelper listSQLiteHelper;
+    private static MsgContentActivity instance;
 
 
     private void initDB() {
-        openHelper = new MySQLiteHelper(this, "chat.db", null, 1);
+
+//        openHelper = new MySQLiteHelper(this, "chat.db", null, 1);
+        listSQLiteHelper = new ListSQLiteHelper(this);
+    }
+
+    public static MsgContentActivity getInstance() {
+        return instance;
     }
 
     private void readChat() {
-        String msg_content;
-        String msg_date;
-        int msg_type;
-        SQLiteDatabase db = openHelper.getReadableDatabase();
-        String sql = "select msg_content,msg_date,msg_type from Chat where friend_name=?";
-        Cursor cursor = db.rawQuery(sql, new String[]{friendName});
-        while (cursor.moveToNext()) {
-            msg_content = cursor.getString(cursor.getColumnIndex("msg_content"));
-            msg_date = cursor.getString(cursor.getColumnIndex("msg_date"));
-            msg_type = cursor.getInt(cursor.getColumnIndex("msg_type"));
-            StringBuilder sb = new StringBuilder();
-            sb.append(msg_date).append("\n" + msg_content);
-            Log.d("sql语句", sql);
-            Log.d("获取本地数据库中“我”和" + friendName + "的聊天记录", msg_content + " " + msg_date + " " + msg_type);
-            Msg msg = new Msg(sb.toString(), msg_type);
-            msgList.add(msg);
-        }
-        db.close();
-
-        msgList = ArticleLocalDataSource.getInstance(this).getMsgList(friendName);
+        msgList = MsgLocalDataSource.getInstance(this).getMsgList(friendName);
     }
 
     @Override
@@ -94,6 +88,7 @@ public class MsgContentActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_msg_content);
 
+        instance = this;
         Intent intent = getIntent();
         friendName = intent.getStringExtra("friendName");
         friendId = intent.getIntExtra("authorId", 0);
@@ -105,13 +100,52 @@ public class MsgContentActivity extends AppCompatActivity implements View.OnClic
         //用于获取用户id
         userInfoManager = new UserInfoManager(MsgContentActivity.this);
 
-        msgContentOut.setOnClickListener(this);
+        msgContentOut.setOnClickListener(view -> {
+
+//            MainActivity.setPosition(0);
+//
+//            SQLiteDatabase db = listSQLiteHelper.getReadableDatabase();
+//            String sql = "select friend_name,friend_id from ChatList where friend_name=?";
+//            Cursor cursor = db.rawQuery(sql, new String[]{friendName});
+//            Boolean result = cursor != null && cursor.getCount() > 0;
+//            if (!result) {
+//                ContentValues con = new ContentValues();
+//                con.put("friend_name", friendName);
+//                con.put("friend_id", friendId);
+//                //保存到本地SQLite
+//                db.insert("ChatList", null, con);
+//
+//                //设置消息列表中聊天框并显示与每个好友的最后一条消息
+//                Msg msg = msgList.get(msgList.size() - 1);
+//                String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
+//                String content = msg.getContent().substring(date.length() + 1, msg.getContent().length());
+//                MsgFragment msgFragment = MainActivity.msgFragment;
+//                Messages messages = new Messages();
+//                messages.setFirstMsg(content);
+//                messages.setFriendName(friendName);
+//                messages.setUserId(friendId);
+//                msgFragment.addTip(messages);
+//            } else {
+//                Msg msg = msgList.get(msgList.size() - 1);
+//                String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
+//                String content = msg.getContent().substring(date.length() + 1, msg.getContent().length());
+//                MsgFragment msgFragment = MainActivity.msgFragment;
+//                Messages messages = new Messages();
+//                messages.setFirstMsg(content);
+//                messages.setFriendName(friendName);
+//                messages.setUserId(friendId);
+//                msgFragment.updateMsgList(MainActivity.position1, messages);
+//            }
+//
+//            msgList.clear();
+
+            finish();
+        });
 
         initDB();
         if (readStatus == 0) {
             readChat();
         }
-        Log.d("friendId", String.valueOf(friendId));
 
         runOnUiThread(new Runnable() {
             @Override
@@ -124,27 +158,24 @@ public class MsgContentActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-        msgSendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String inputText = etMsgContent.getText().toString();
-                @SuppressLint("SimpleDateFormat")
-                String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
-                StringBuilder sb = new StringBuilder();
-                sb.append(date).append("\n" + inputText);
-                if (!"".equals(inputText)) {
-                    MainActivity.setConfigure(inputText, friendName, friendId, true);
-                    inputText = sb.toString();
-                    Msg msg = new Msg(inputText, Msg.TYPE_SENT);
-                    msgList.add(msg);
-                    adapter.notifyItemInserted(msgList.size() - 1);
-                    msgRecyclerView.scrollToPosition(msgList.size() - 1);
-                } else {
-                    Toast.makeText(MsgContentActivity.this, "消息不能为空", Toast.LENGTH_SHORT).show();
-                }
-                sb.delete(0, sb.length());
-                etMsgContent.setText("");
+        msgSendBtn.setOnClickListener(v -> {
+            String inputText = etMsgContent.getText().toString();
+            @SuppressLint("SimpleDateFormat")
+            String date = new SimpleDateFormat("hh:mm:ss").format(new Date());
+            StringBuilder sb = new StringBuilder();
+            String content = inputText;
+            sb.append(date).append("\n" + inputText);
+            if (!"".equals(inputText)) {
+                MainActivity.setConfigure(inputText, friendName, friendId, true);
+                Msg msg = new Msg(content, Msg.TYPE_SENT);
+                msgList.add(msg);
+                adapter.notifyItemInserted(msgList.size() - 1);
+                msgRecyclerView.scrollToPosition(msgList.size() - 1);
+            } else {
+                Toast.makeText(MsgContentActivity.this, "消息不能为空", Toast.LENGTH_SHORT).show();
             }
+            sb.delete(0, sb.length());
+            etMsgContent.setText("");
         });
     }
 
@@ -152,15 +183,9 @@ public class MsgContentActivity extends AppCompatActivity implements View.OnClic
         readStatus = readStatus1;
     }
 
-    @Override
-    public void onClick(View v) {
-        finish();
-        MainActivity.setPosition(0);
-
-        //设置消息列表中显示与每个好友的最后一条消息
-        Msg msg = msgList.get(msgList.size() - 1);
-
-        msgList.clear();
+    public void updateMsgList(Msg msg) {
+        msgList.add(msg);
+        adapter.notifyDataSetChanged();
     }
 }
 

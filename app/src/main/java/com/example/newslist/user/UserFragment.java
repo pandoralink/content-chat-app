@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.example.newslist.LoginActivity;
 import com.example.newslist.MainActivity;
 import com.example.newslist.R;
+import com.example.newslist.data.local.ArticleLocalDataSource;
 
 /**
  * @author 庞旺
@@ -97,6 +98,12 @@ public class UserFragment extends Fragment {
         SharedPreferences.Editor editor = spFile.edit();
         editor.remove(userIdKey);
         editor.apply();
+
+        clearUserLocalData();
+    }
+
+    private void clearUserLocalData() {
+        ArticleLocalDataSource.getInstance(getContext()).clearAll();
     }
 
     private void initView() {

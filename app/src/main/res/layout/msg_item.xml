@@ -16,7 +16,9 @@
             android:id="@+id/iv_others_head"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/default_head" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -36,6 +38,10 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:background="@drawable/circle_msg"
+                android:maxWidth="180dp"
+                android:padding="10dp"
+                android:textColor="@color/radioButtonBackgroundColor"
                 android:textStyle="bold"
                 tools:text="测试输入内容测试输入内容" />
         </LinearLayout>
@@ -63,15 +69,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:background="@drawable/circle_msg"
+                android:maxWidth="180dp"
+                android:padding="10dp"
+                android:textColor="@color/radioButtonBackgroundColor"
                 android:textStyle="bold"
-                tools:text="输入测试内容" />
+                tools:text="测试输入内容" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/iv_my_head"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/default_head" />
     </LinearLayout>
 
 </LinearLayout>
