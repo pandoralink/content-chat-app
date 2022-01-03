@@ -64,7 +64,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 /**
- * @author 庞旺
+ * @author poplink
  */
 public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
@@ -89,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* 分割线 */
     private Socket socketSend;
-        private String ip = "122.9.150.124";
-//    private String ip = "192.168.43.145";
+    private String ip = "122.9.150.124";
     private String port = "6666";
     DataInputStream in;
     DataOutputStream out;
