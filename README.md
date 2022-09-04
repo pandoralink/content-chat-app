@@ -1,4 +1,4 @@
-<p align="center"><img alt="APP 图片" align="center" width="100px" height="100px" src="./static/ic_book_128.svg"/></p><br />
+<p align="center"><img alt="APP 图片" align="center" width="100px" height="100px" src="./doc/ic_book_128.svg"/></p><br />
 <p align="center">
   <a href="https://baike.baidu.com/item/X%2FMIT%E8%AE%B8%E5%8F%AF%E5%8D%8F%E8%AE%AE/10136122?fr=aladdin"><img src="https://img.shields.io/github/license/pandoralink/CommunityInteractionProject-H5" alt="License"></a>
 </p>
